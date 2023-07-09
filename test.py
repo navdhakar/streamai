@@ -1,10 +1,10 @@
 
 from serveai.app import endpointIO
-from serveai.models import ATalpacalora
+from serveai.models import Autoalpacalora
 def testiofunc(inpt:str):
     return f"this is output of {inpt}"
     
-newtraininstance = ATalpacalora("string")
-print(newtraininstance.train())
+newtraininstance = Autoalpacalora("decapoda/llama-7b", "./scroltest")
+print(newtraininstance.info['available_methods'])
 #model1 = endpointIO("some sort", testiofunc)
 #model1.run()

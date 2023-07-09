@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 import random, string
-from serveai.models.base import ATalpacalora
+from serveai.models.base import Autoalpacalora
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
