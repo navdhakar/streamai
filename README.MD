@@ -5,8 +5,7 @@ todo:
 - [ ] fix dynamic installation issue
 - [ ] add endpoint for info about deployed model
 #### deploy from custom model script
-```
-
+```py
 from serveai.app import endpointIO
 from serveai.models import Autoalpacalora
 def custommodelIO(input:str):
@@ -16,8 +15,8 @@ def custommodelIO(input:str):
 model1 = endpointIO(modelinstance.custommodeIO)
 model1.run() #this will create a server api endpoint for your model, at http://0.0.0.0:8000 see terminal logs for more info about endpoints
 ```
-#### deploy from available models (in built models can also be finetuned easily)
-```
+#### deploy from inbuild models libs(you can also finetun inbuilt models)
+```py
 from serveai.app import endpointIO
 from serveai.models import Autoalpacalora
 def testiofunc(inpt:str):
