@@ -1,6 +1,6 @@
 
 from serveai.app import endpointIO
-from serveai.models import Autoalpacalora
+from serveai.llms import Autoalpacalora
 def testiofunc(inpt:str):
     return f"this is output of {inpt}"
     
