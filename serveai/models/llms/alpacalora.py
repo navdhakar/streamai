@@ -66,3 +66,5 @@ class Autoalpacalora:
     def train(self, base_model:str, data_path:str, output_dir:str):
         AutoTrainalpacalora(base_model=base_model, data_path=data_path, output_dir=output_dir)        
         return f"training model" 
+    def testIO(self, someinput):
+        return f"your model output is {someinput}"

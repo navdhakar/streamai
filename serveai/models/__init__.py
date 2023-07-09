@@ -1,1 +1,2 @@
-from serveai.models.llms.alpacalora import Autoalpacalora
+from serveai.models.llms import Autoalpacalora
+

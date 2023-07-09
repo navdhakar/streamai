@@ -17,8 +17,7 @@ class Data(BaseModel):
     description: str | None = None
 endpointsecret = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
 class endpointIO:
-    def __init__(self, input:str, iofunc):
-        self.input = input
+    def __init__(self, iofunc):
         self.iopipe = iofunc 
 
     def run(self):
