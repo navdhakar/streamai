@@ -25,7 +25,15 @@ class Autoalpacalora:
         self.base_model = base_model,
         self.lora_weights = lora_weights,
         self.prompt_template= "",  
-        self.server_name = "0.0.0.0",  
+        self.server_name = "0.0.0.0",
+        self.model = None
+        self.input = None
+        self.temperature=0.1,
+        self.top_p=0.75,
+        self.top_k=40,
+        self.num_beams=4,
+        self.max_new_tokens=128,
+        self.stream_output=False,
 
 
        # require_install = ['accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=4.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
@@ -35,11 +43,8 @@ class Autoalpacalora:
 
     def loadmodel(self):
         self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = self.lora_weights)
-        out
-    def inference(
+    def setparameters(
         self,
-        instruction,
-        model,
         input=None,
         temperature=0.1,
         top_p=0.75,
@@ -48,23 +53,33 @@ class Autoalpacalora:
         max_new_tokens=128,
         stream_output=False,
     ):
-        if model:
+        self.input = input
+        self.temperature=temperature,
+        self.top_p=top_p,
+        self.top_k=top_k,
+        self.num_beams=num_beams,
+        self.max_new_tokens=max_new_tokens,
+        self.stream_output=stream_output,
+    def train(self, base_model:str, data_path:str, output_dir:str):
+        # still a lot of work to do in this train method(verbose etc.)
+        AutoTrainalpacalora(base_model=base_model, data_path=data_path, output_dir=output_dir)        
+        return f"training model" 
+    def inferenceIO(self, prompt):
+        if self.model:
             self.output = Evalmodel(
-                                instruction=instruction,
-                                model=model,
-                                input=None,
-                                temperature=0.1,
-                                top_p=0.75,
-                                top_k=40,
-                                num_beams=4,
-                                max_new_tokens=128,
-                                stream_output=False,
+                                instruction=prompt,
+                                model=self.model,
+                                input=self.input,
+                                temperature=self.temperature,
+                                top_p=self.top_p,
+                                top_k=self.top_k,
+                                num_beams=self.num_beams,
+                                max_new_tokens=self.max_new_tokens,
+                                stream_output=self.stream_output,
                             )    
+            # this out put should always be a string.                
             return output
         else:
             return "Please load the model first(modelinstance.loadmodel())."
-    def train(self, base_model:str, data_path:str, output_dir:str):
-        AutoTrainalpacalora(base_model=base_model, data_path=data_path, output_dir=output_dir)        
-        return f"training model" 
-    def testIO(self, someinput):
-        return f"your model output is {someinput}"
+    def testinferenceIO(self, prompt):
+        return f"your model output is {prompt}"
