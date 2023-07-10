@@ -1,13 +1,13 @@
-## 🌩️ Serve AI easily
-### serveai let's you serve any AI agents/model(currently llms only) easily as api and integrate in fontend quickly.
+## 🌩️ Stream AI easily
+### streamai let's you serve any AI agents/model(currently llms only) easily as api and integrate in fontend quickly.
 todo:
 - [ ] test alpaca lora with deployment
 - [ ] fix dynamic installation issue
 - [ ] add endpoint for info about deployed model
 #### deploy from custom model script
 ```py
-from serveai.app import endpointIO
-from serveai.models import Autoalpacalora
+from streamai.app import endpointIO
+from streamai.llms import Autoalpacalora
 def custom_model_IO(input:str):
     output = customodelinference(input) #depend on your inference function, just need to return string output from it.
     return f"this is output of {output}"
@@ -17,8 +17,8 @@ model1.run() #this will create a server api endpoint for your model, at http://0
 ```
 #### deploy from inbuild models libs(you can also finetun inbuilt models)
 ```py
-from serveai.app import endpointIO
-from serveai.models import Autoalpacalora
+from streamai.app import endpointIO
+from streamai.llms import Autoalpacalora
     
 modelinstance = Autoalpacalora("decapoda/llama-7b", "./scroltest")
 #modelinstance.loadmodel() #required for deployment of model as api, not required during finetuning.

@@ -1,7 +1,7 @@
 __pycache__
+streamaienv/
 notebooks
 .*.swp
 build
 dist
 *.egg-info
-serveaienv/

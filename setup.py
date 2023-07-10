@@ -5,9 +5,9 @@ directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(directory, 'README.md'), encoding='utf-8') as f:
   long_description = f.read()
 
-setup(name='serveai',
-      version='0.0.6',
-      description='serve ai agents as api easily.',
+setup(name='streamai',
+      version='0.0.2',
+      description='serve ai agents/models easily as api.',
       author='Navdeep Dhakar',
       license='MIT',
       long_description=long_description,
