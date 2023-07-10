@@ -1,9 +1,6 @@
 ## 🌩️ Stream AI easily
 ### streamai let's you serve any AI agents/model(currently llms only) easily as api and integrate in fontend quickly.
-todo:
-- [ ] test alpaca lora with deployment
-- [ ] fix dynamic installation issue
-- [ ] add endpoint for info about deployed model
+
 #### deploy from custom model script
 ```py
 from streamai.app import endpointIO
@@ -27,4 +24,9 @@ print(modelinstance.info['available_methods'])
 model1 = endpointIO(modelinstance.testinferenceIO) #still some testing to do in actual alpaca inferneceIO.
 model1.run()
 ```
+todo:
+- [ ] test alpaca lora with deployment
+- [ ] fix dynamic installation issue
+- [ ] add endpoint for info about deployed model
+
 
