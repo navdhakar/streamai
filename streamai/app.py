@@ -1,3 +1,4 @@
+from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -14,7 +15,7 @@ app.add_middleware(
 )
 class Data(BaseModel):
     input: str
-    description: str | None = None
+    description: Union[str, None] = None
 endpointsecret = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
 class endpointIO:
     def __init__(self, iofunc):

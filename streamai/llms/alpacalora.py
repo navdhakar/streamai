@@ -39,7 +39,7 @@ class Autoalpacalora:
         #require_install = ['accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
         #for package in require_install:
         #    subprocess.run([sys.executable, "-m", "pip", "install", package])
-        #from serveai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
+        #from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
 
     def loadmodel(self):
         self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = self.lora_weights)
