@@ -21,18 +21,22 @@ model1.run() #this will create a server api endpoint for your model, at http://0
 from streamai.app import endpointIO
 from streamai.llms import Autoalpacalora
     
-modelinstance = Autoalpacalora("decapoda/llama-7b")
-#modelinstance.loadmodel() #required for deployment of model as api, not required during finetuning.
+modelinstance = Autoalpacalora("decapoda-research/llama-7b-hf")
+modelinstance.loadmodel() #required for deployment of model as api, not required during finetuning.
 #modelinstance.setparameters(input="use this as context", max_tokens=128, top_p=12, top_k=40) #optional, look into .info['available_methods']['setparameters'] for more details.
 print(modelinstance.info['available_methods'])
-model1 = endpointIO(modelinstance.testinferenceIO) #still some testing to do in actual alpaca inferneceIO.
-model1.run()
+
+output = modelinstance.inferenceIO(prompt="what is llama?")  #will return generated response.
+print(output)
+#model1 = endpointIO(modelinstance.testinferenceIO) #still some testing to do in actual alpaca inferneceIO.
+#model1.run()
 ```
 todo:
 - [x] test alpaca lora with deployment
 - [x] fix dynamic installation issue(temp fix)
 - [ ] fix(api endpoint start but does not work on cloud probably firewall issue) 
 - [ ] add nginx reverse proxy.
+- [ ] add tests cases.
 - [ ] add endpoint for info about deployed model
 
 
