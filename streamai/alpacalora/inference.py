@@ -8,8 +8,8 @@ import transformers
 from peft import PeftModel
 from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer
 
-from utils.callbacks import Iteratorize, Stream
-from utils.prompter import Prompter
+from streamai.alpacalora.utils.callbacks import Iteratorize, Stream
+from streamai.alpacalora.utils.prompter import Prompter
 
 if torch.cuda.is_available():
     device = "cuda"
@@ -112,6 +112,8 @@ def main(
 
 def evaluate(
     instruction,
+    model,
+    base_model="",
     input=None,
     temperature=0.1,
     top_p=0.75,
@@ -119,10 +121,11 @@ def evaluate(
     num_beams=4,
     max_new_tokens=128,
     stream_output=False,
-    model,
     **kwargs,
 ):
+    prompter = Prompter("")
     prompt = prompter.generate_prompt(instruction, input)
+    tokenizer = LlamaTokenizer.from_pretrained(base_model)
     inputs = tokenizer(prompt, return_tensors="pt")
     input_ids = inputs["input_ids"].to(device)
     generation_config = GenerationConfig(
