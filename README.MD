@@ -1,5 +1,5 @@
 ## 🌩️ Stream AI easily
-### streamai let's you serve any AI agents/model(currently llms only) easily as api and integrate in fontend quickly.
+### streamai let's you serve any AI agents/model(currently llms only) easily as api and integrate in frontend quickly.
 
 #### deploy from custom model script
 ```py
@@ -12,7 +12,7 @@ def custom_model_IO(input:str):
 model1 = endpointIO(custom_model_IO)
 model1.run() #this will create a server api endpoint for your model, at http://0.0.0.0:8000 see terminal logs for more info about endpoints
 ```
-#### deploy from inbuild models libs(you can also finetun inbuilt models)
+#### deploy from inbuild models libs(you can also finetune inbuilt models)
 ```py
 from streamai.app import endpointIO
 from streamai.llms import Autoalpacalora
