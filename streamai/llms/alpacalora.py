@@ -1,5 +1,5 @@
 import subprocess, sys
-#from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
+from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
 class Autoalpacalora:
     def __init__(self, base_model, lora_weights=""):
         self.info = {
@@ -78,7 +78,7 @@ class Autoalpacalora:
             for output in Evalmodel(
                                 instruction=prompt,
                                 model=self.model,
-                                base_model=self.base_model
+                                base_model=self.base_model,
                                 input=self.input,
                                 temperature=self.temperature,
                                 top_p=self.top_p,
