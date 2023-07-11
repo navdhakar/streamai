@@ -1,6 +1,9 @@
 import subprocess, sys
-from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
 class Autoalpacalora:
+    require_install = ['accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
+    for package in require_install:
+        subprocess.run([sys.executable, "-m", "pip", "install", package])
+    from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
     def __init__(self, base_model, lora_weights=""):
         self.info = {
             "modelname":"alpacalora",
@@ -39,13 +42,8 @@ class Autoalpacalora:
         self.max_new_tokens=128
         self.stream_output=False
 
-
-        #require_install = ['accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
-        #for package in require_install:
-        #    subprocess.run([sys.executable, "-m", "pip", "install", package])
-
     def loadmodel(self):
-        self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = self.lora_weights)
+        self.model = Autoalpacalora.Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = self.lora_weights)
     def setparameters(
         self,
         input=None,
@@ -70,12 +68,12 @@ class Autoalpacalora:
         #correct data path provide, 
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
-        AutoTrainalpacalora(base_model=base_model, data_path=data_path, output_dir=output_dir)        
+        Autoalpacalora.AutoTrainalpacalora(base_model=base_model, data_path=data_path, output_dir=output_dir)        
         return f"training model" 
     def inferenceIO(self, prompt):
         if self.model:
             self.generation = ""
-            for output in Evalmodel(
+            for output in Autoalpacalora.Evalmodel(
                                 instruction=prompt,
                                 model=self.model,
                                 base_model=self.base_model,
