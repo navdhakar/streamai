@@ -1,4 +1,3 @@
-from serveai.model.alapaclora.generate import main
 import os
 import sys
 
@@ -27,7 +26,7 @@ except:  # noqa: E722
 def main(
     load_8bit: bool = False,
     base_model: str = "",
-    lora_weights: str = "tloen/alpaca-lora-7b",
+    lora_weights: str = None,
     prompt_template: str = "",  # The prompt template to use, will default to alpaca.
     server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
     share_gradio: bool = False,
@@ -39,39 +38,62 @@ def main(
 
     prompter = Prompter(prompt_template)
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
-    if device == "cuda":
-        model = LlamaForCausalLM.from_pretrained(
-            base_model,
-            load_in_8bit=load_8bit,
-            torch_dtype=torch.float16,
-            device_map="auto",
-        )
-        model = PeftModel.from_pretrained(
-            model,
-            lora_weights,
-            torch_dtype=torch.float16,
-        )
-    elif device == "mps":
-        model = LlamaForCausalLM.from_pretrained(
-            base_model,
-            device_map={"": device},
-            torch_dtype=torch.float16,
-        )
-        model = PeftModel.from_pretrained(
-            model,
-            lora_weights,
-            device_map={"": device},
-            torch_dtype=torch.float16,
-        )
+    if lora_weights:
+        
+        if device == "cuda":
+            model = LlamaForCausalLM.from_pretrained(
+                base_model,
+                load_in_8bit=load_8bit,
+                torch_dtype=torch.float16,
+                device_map="auto",
+            )
+            model = PeftModel.from_pretrained(
+                model,
+                lora_weights,
+                torch_dtype=torch.float16,
+            )
+        elif device == "mps":
+            model = LlamaForCausalLM.from_pretrained(
+                base_model,
+                device_map={"": device},
+                torch_dtype=torch.float16,
+            )
+            model = PeftModel.from_pretrained(
+                model,
+                lora_weights,
+                device_map={"": device},
+                torch_dtype=torch.float16,
+            )
+        else:
+            model = LlamaForCausalLM.from_pretrained(
+                base_model, device_map={"": device}, low_cpu_mem_usage=True
+            )
+            model = PeftModel.from_pretrained(
+                model,
+                lora_weights,
+                device_map={"": device},
+            )
+
     else:
-        model = LlamaForCausalLM.from_pretrained(
-            base_model, device_map={"": device}, low_cpu_mem_usage=True
-        )
-        model = PeftModel.from_pretrained(
-            model,
-            lora_weights,
-            device_map={"": device},
-        )
+        if device == "cuda":
+            model = LlamaForCausalLM.from_pretrained(
+                base_model,
+                load_in_8bit=load_8bit,
+                torch_dtype=torch.float16,
+                device_map="auto",
+            )
+            
+        elif device == "mps":
+            model = LlamaForCausalLM.from_pretrained(
+                base_model,
+                device_map={"": device},
+                torch_dtype=torch.float16,
+            )
+        else:
+            model = LlamaForCausalLM.from_pretrained(
+                base_model, device_map={"": device}, low_cpu_mem_usage=True
+            )
+
 
     # unwind broken decapoda-research config
     model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk

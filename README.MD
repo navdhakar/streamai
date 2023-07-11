@@ -17,7 +17,7 @@ model1.run() #this will create a server api endpoint for your model, at http://0
 from streamai.app import endpointIO
 from streamai.llms import Autoalpacalora
     
-modelinstance = Autoalpacalora("decapoda/llama-7b", "./scroltest")
+modelinstance = Autoalpacalora("decapoda/llama-7b")
 #modelinstance.loadmodel() #required for deployment of model as api, not required during finetuning.
 #modelinstance.setparameters(input="use this as context", max_tokens=128, top_p=12, top_k=40) #optional, look into .info['available_methods']['setparameters'] for more details.
 print(modelinstance.info['available_methods'])

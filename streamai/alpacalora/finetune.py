@@ -22,7 +22,7 @@ from peft import (
 )
 from transformers import LlamaForCausalLM, LlamaTokenizer
 
-from utils.prompter import Prompter
+from streamai.alpacalora.utils.prompter import Prompter
 
 
 def train(

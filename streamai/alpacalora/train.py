@@ -1,4 +1,4 @@
-from serveai.models.alpacalora.finetune import train
+from streamai.alpacalora.finetune import train
 import requests
 import fire
 import subprocess

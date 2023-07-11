@@ -1,11 +1,11 @@
 import subprocess, sys
 class Autoalpacalora:
-    def __init__(self, base_model, lora_weights):
+    def __init__(self, base_model, lora_weights=""):
         self.info = {
             "modelname":"alpacalora",
             "initialization_args":{
-                "base_model":"path to base model (eg. decapoda/llama-7b)",
-                "lora_weights":"path to trained lora weights dir."
+                "base_model*":"path to base model (eg. decapoda/llama-7b)",
+                "lora_weights(optional)":"path to trained lora weights dir."
             },
             "available_methods":{
                 "loadmodels":{
@@ -16,8 +16,11 @@ class Autoalpacalora:
                     "arg":["datasetpath"],
                     "desc":"training model directly with correct formatted dataset(dataset instruction WIP)"
                 },
-                "inference":{
-                    "arg":["instruction*", "loadedmodel", "input", "temperature", "top_p", "top_k", "num_beams", "max_new_tokens", "stream_output(WIP)"]
+                "inferenceIO":{
+                    "arg":["instruction/prompt*"]
+                },
+                "setparameters":{
+                    "arg":["input*", "temperature", "top_p", "top_k", "num_beams", "max_new_tokens", "stream_output(WIP)"]
                 }
             }
         }
@@ -61,7 +64,12 @@ class Autoalpacalora:
         self.max_new_tokens=max_new_tokens,
         self.stream_output=stream_output,
     def train(self, base_model:str, data_path:str, output_dir:str):
-        # still a lot of work to do in this train method(verbose etc.)
+        #WIP
+        #TODO: 
+        #peft(lora) training, #raw training, training metrics, 
+        #correct data path provide, 
+        #saving trained output weights correcly so autoloader can load finetuned model easily,
+        #chek if required can gpu specs support training
         AutoTrainalpacalora(base_model=base_model, data_path=data_path, output_dir=output_dir)        
         return f"training model" 
     def inferenceIO(self, prompt):
