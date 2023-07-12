@@ -1,6 +1,6 @@
 ## 🌩️ Stream AI easily
 ### streamai let's you serve any AI agents/model(currently llms only) easily as api and integrate in frontend quickly.
-#need to replace cudua lib in bitsandbytes with cuda lib 117 version
+# need to replace cudua lib in bitsandbytes with cuda lib 117 version(bnb bug).
 ```bash
 cp /venv/lib/python3.8/site-packages/bitsandbytes/libbitsandbytes_cuda117.so /venv/lib/python3.8/site-packages/bitsandbytes/libbitsandbytes_cpu.so
 ```
