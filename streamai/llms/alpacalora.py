@@ -15,11 +15,19 @@ class Autoalpacalora:
             "modelname":"alpacalora",
             "initialization_args":{
                 "base_model*":"path to base model (eg. decapoda/llama-7b)",
-                "lora_weights(optional)":"path to trained lora weights dir."
+            },
+            "dataset":{
+                "format":".json",
+                "structure":[
+                    {"instruction": "Give three tips for staying healthy.", "input": "", "output": "1.Eat a balanced diet . \n2. Exercise regularly.    \n3. Get enough sleep."},
+                    {"instruction": "What are the three primary colors?", "input": "", "output": "The three primary colors are red, blue, and yellow."
+                    }
+                ],
+            "demo_dataset":"https://firebasestorage.googleapis.com/v0/b/pdf-analysis-saas.appspot.com/o/Other%2Fdataset.json?alt=media&token=28abd658-a308-4050-b631-54bab9b63a6b"
             },
             "available_methods":{
                 "loadmodels":{
-                    "args":None,
+                    "args":["lora_wights"],
                     "desc":"call this to load model immediately after object creation"
                 },
                 "train":{
@@ -30,7 +38,7 @@ class Autoalpacalora:
                     "arg":["instruction/prompt*"]
                 },
                 "setparameters":{
-                    "arg":["input*", "temperature", "top_p", "top_k", "num_beams", "max_new_tokens", "stream_output(WIP)"]
+                    "arg":["input", "temperature", "top_p", "top_k", "num_beams", "max_new_tokens", "stream_output(WIP)"]
                 }
             }
         }

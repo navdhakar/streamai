@@ -27,7 +27,7 @@ class endpointIO:
     def run(self, port=8080, workers=4):
         print("Starting AI services")
         print(f"Inference endpoint -> http://0.0.0.0:{port}/{endpoint_secret}/inference")
-
+        print(f"endpoint secret {endpoint_secret}")
         @app.post(f"/{endpoint_secret}/inference")
         async def infernece(data: Data):
             output = self.iopipe(data.input)
