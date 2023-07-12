@@ -16,7 +16,7 @@ setup(name='streamai',
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License"
       ],
-      install_requires=['fastapi', 'uvicorn', 'fire', 'gunicorn'],
+      install_requires=['fastapi', 'uvicorn', 'fire'],
       python_requires='>=3.6',
       packages=find_packages(),
       include_package_data=True)
