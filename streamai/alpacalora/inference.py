@@ -39,7 +39,7 @@ def main(
     prompter = Prompter(prompt_template)
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
     if lora_weights:
-        
+        print("loading with finuted lora weights")
         if device == "cuda":
             model = LlamaForCausalLM.from_pretrained(
                 base_model,

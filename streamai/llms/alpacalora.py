@@ -1,10 +1,16 @@
 import subprocess, sys
+import pkg_resources
 class Autoalpacalora:
-    require_install = ['accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
-    for package in require_install:
-        subprocess.run([sys.executable, "-m", "pip", "install", package])
-    from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
-    def __init__(self, base_model, lora_weights=""):
+    def __init__(self, base_model):
+        require_install = ['accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
+    
+        installed_packages = [pkg.key for pkg in pkg_resources.working_set]
+        packages_to_install = [package for package in require_install if package not in installed_packages]
+    
+        if packages_to_install:
+            subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
+    
+        from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
         self.info = {
             "modelname":"alpacalora",
             "initialization_args":{
@@ -30,7 +36,6 @@ class Autoalpacalora:
         }
         self.load_8bit = False
         self.base_model = base_model
-        self.lora_weights = lora_weights
         self.prompt_template= ""  
         self.server_name = "0.0.0.0"
         self.model = None
@@ -42,8 +47,9 @@ class Autoalpacalora:
         self.max_new_tokens=128
         self.stream_output=False
 
-    def loadmodel(self):
-        self.model = Autoalpacalora.Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = self.lora_weights)
+    def loadmodel(self, lora_weights:str=""):
+        from streamai.alpacalora import Loadmodel
+        self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = lora_weights)
     def setparameters(
         self,
         input=None,
@@ -61,19 +67,23 @@ class Autoalpacalora:
         self.num_beams=num_beams
         self.max_new_tokens=max_new_tokens
         self.stream_output=stream_output
-    def train(self, base_model:str, data_path:str, output_dir:str):
+    def train(self, base_model:str="decapoda-research/llama-7b-hf", dataset_url:str=None, model_name:str="alpacafinetuned"):
+        from streamai.alpacalora import AutoTrainalpacalora
         #WIP
         #TODO: 
         #peft(lora) training, #raw training, training metrics, 
         #correct data path provide, 
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
-        Autoalpacalora.AutoTrainalpacalora(base_model=base_model, data_path=data_path, output_dir=output_dir)        
-        return f"training model" 
+        if dataset_url:
+            AutoTrainalpacalora(base_model=base_model, dataset_url=dataset_url, model_name=model_name)        
+        else:
+            return f"please provide url for your dataset." 
     def inferenceIO(self, prompt):
+        from streamai.alpacalora import Evalmodel
         if self.model:
             self.generation = ""
-            for output in Autoalpacalora.Evalmodel(
+            for output in Evalmodel(
                                 instruction=prompt,
                                 model=self.model,
                                 base_model=self.base_model,
@@ -90,5 +100,3 @@ class Autoalpacalora:
             return self.generation
         else:
             return "Please load the model first(modelinstance.loadmodel())."
-    def testinferenceIO(self, prompt):
-        return f"your model output is {prompt}"
