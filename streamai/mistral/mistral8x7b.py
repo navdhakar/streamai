@@ -130,7 +130,7 @@ def train():
   packing=True,
   formatting_func=create_prompt, # this will aplly the create_prompt mapping to all training and test dataset
   args=args,
-  train_dataset=train_datasets_sampled,
+  train_dataset=tokenized_train_dataset,
   eval_dataset=tokenized_val_dataset
 )
     trainer.train()

@@ -1,4 +1,4 @@
-from streamai.mistral.mistral8x7b import train
+from streamai.mistral.mistral7b import train as TrainMistral7b
 import requests
 import fire
 import subprocess

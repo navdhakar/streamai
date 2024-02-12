@@ -8,9 +8,8 @@ from peft import LoraConfig, get_peft_model
 import transformers
 from datetime import datetime
 from trl import SFTTrainer
-base_model = "mistralai/Mistral-7B-v0.1" #bn22/Mistral-7B-Instruct-v0.1-sharded
-output_dir = './mistral7btrain'
-dataset_file = 'dataset.json'
+import fire
+
 
 def formatting_func(sample):
   bos_token = "<s>"
@@ -54,7 +53,11 @@ def print_trainable_parameters(model):
     print(
         f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
     )
-def train():
+def train(
+    base_model=str:"mistralai/Mistral-7B-v0.1",
+    dataset_file=str:"",
+    output_dir:=str:""
+):
     
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
     eval_dataset = load_dataset('json', data_files=dataset_file, split='train[20%:25%]')
@@ -143,4 +146,5 @@ def train():
     model.config.use_cache = False
     trainer.train()
     trainer.model.save_pretrained(output_dir)
-train()
+if __name__ == "__main__":
+    fire.Fire(Trainmodel)

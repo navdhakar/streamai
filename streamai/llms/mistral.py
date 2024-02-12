@@ -76,7 +76,8 @@ class AutoMistral:
         self.max_new_tokens=max_new_tokens
         self.stream_output=stream_output
     def train(self, base_model:str="decapoda-research/llama-7b-hf", dataset_url:str=None, model_name:str="alpacafinetuned"):
-        from streamai.alpacalora import AutoTrainalpacalora
+        from streamai.mistral import AutoTrainMistral
+
         #WIP
         #TODO: 
         #peft(lora) training, #raw training, training metrics, 
@@ -84,7 +85,7 @@ class AutoMistral:
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
         if dataset_url:
-            AutoTrainalpacalora(base_model=base_model, dataset_url=dataset_url, model_name=model_name)        
+            AutoTrainaMistral(base_model=base_model, dataset_url=dataset_url, model_name=model_name)        
         else:
             return f"please provide url for your dataset." 
     def inferenceIO(self, prompt):
