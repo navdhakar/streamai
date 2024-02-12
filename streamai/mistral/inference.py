@@ -1,4 +1,4 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig,HfArgumentParser,TrainingArguments,pipeline, logging, TextStreamer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig,HfArgumentParser,TrainingArguments,pipeline, logging, TextStreamer, GenerationConfig
 from peft import LoraConfig, PeftModel, prepare_model_for_kbit_training, get_peft_model
 
 import os, torch, platform, warnings, sys
@@ -38,7 +38,6 @@ def main(
         base_model
     ), "Please specify a --base_model, e.g. --base_model='huggyllama/llama-7b'"
 
-    prompter = Prompter(prompt_template)
     tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
@@ -67,7 +66,6 @@ def main(
                 base_model, low_cpu_mem_usage=True,
                 return_dict=True,torch_dtype=torch.bfloat16,
                 device_map={"": device},
-                low_cpu_mem_usage=True
                 )
             model = PeftModel.from_pretrained(base_model_reload, lora_weights)
             model = model.merge_and_unload()
@@ -89,12 +87,11 @@ def main(
                 )
         else:
 
-            model = LlamaForCausalLM.from_pretrained(
-                base_model,
+            model = AutoModelForCausalLM.from_pretrained(
+                base_model, low_cpu_mem_usage=True,
+                return_dict=True,torch_dtype=torch.bfloat16,
                 device_map={"": device},
-                low_cpu_mem_usage=True,
-                torch_dtype=torch.float16,
-            )
+                )
 
 
     # unwind broken decapoda-research config
@@ -126,13 +123,13 @@ def evaluate(
 ):
     system_prompt = 'The conversation between Human and AI assisatance named Mistral\n'
     B_INST, E_INST = "[INST]", "[/INST]"
-    prompt = f"{system_prompt}{B_INST}{user_prompt.strip()}\n{E_INST}"
+    prompt = f"{system_prompt}{B_INST}{instruction.strip()}\n{E_INST}"
 
     tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
 
-    inputs = tokenizer([prompt], return_tensors="pt").to(runtimeFlag)
+    inputs = tokenizer([prompt], return_tensors="pt")
     input_ids = inputs["input_ids"].to(device)
     generation_config = GenerationConfig(
         temperature=temperature,

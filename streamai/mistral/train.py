@@ -32,18 +32,16 @@ def Trainmodel(
             # Reading from json file
             json_object = json.load(openfile)
             val_set_size = int(len(json_object)*0.1)
-            if(base_model == 'mistral8x7b'){
+            if(base_model == 'mistral8x7b'):
                 print("training mistral moe")
                 # train(base_model="decapoda-research/llama-7b-hf", data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size)
                 # print("uploading finetuned model to storage")
                 # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
-            }
-            if(base_model == 'mistralai/Mistral-7B-v0.1b'){
+            if(base_model == 'mistralai/Mistral-7B-v0.1'):
                 print('training mistral 7b model')
-                TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1f", dataset_path='dataset.json', output_dir=f"{output_dir}")
+                TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1", dataset_path='dataset.json', output_dir=f"{output_dir}")
                 # print("uploading finetuned model to storage")
                 # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
-            }
             else:
                 print(f'this model ${base_model} is not available in library.')
                 print(f'please select from the availabel model: ${available_models}')
@@ -58,18 +56,16 @@ def Trainmodel(
                 json_object = json.load(openfile)
                 val_set_size = int(len(json_object)*0.1)
 
-                if(base_model == 'mistral8x7b'){
+                if(base_model == 'mistral8x7b'):
                     print("training mistral moe")
                     # train(base_model="decapoda-research/llama-7b-hf", data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size)
                     # print("uploading finetuned model to storage")
                     # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
                     print("training completed.")
                     print(f"fine tuning weights are present in dir {output_dir}")
-                }
-                if(base_model == 'mistralai/Mistral-7B-v0.1b'){
+                if(base_model == 'mistralai/Mistral-7B-v0.1'):
                     print('training mistral 7b model')
-                    TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1f", dataset_path='dataset.json', output_dir=f"{output_dir}")
-                }
+                    TrainMistral7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}")
                 else:
                     print(f'this model ${base_model} is not available in library.')
                     print(f'please select from the availabel model: ${available_models}')

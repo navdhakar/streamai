@@ -2,7 +2,7 @@ import subprocess, sys
 import pkg_resources
 class AutoMistral:
     def __init__(self, base_model):
-        require_install = ['trl', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
+        require_install = ['trl', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm', 'torch==2.2.0']
     
         installed_packages = [pkg.key for pkg in pkg_resources.working_set]
         packages_to_install = [package for package in require_install if package not in installed_packages]
@@ -10,7 +10,7 @@ class AutoMistral:
         if packages_to_install:
             subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
     
-        from streamai.mistral import Loadmodel, Evalmodel, AutoTrainalpacalora
+        from streamai.mistral import Loadmodel, Evalmodel, AutoTrainMistral
         self.info = {
             "modelname":"mistral",
             "initialization_args":{
@@ -55,9 +55,9 @@ class AutoMistral:
         self.max_new_tokens=128
         self.stream_output=False
 
-    def loadmodel(self, lora_weights:str=""):
+    def loadmodel(self, model_name:str=""):
         from streamai.mistral import Loadmodel
-        self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = lora_weights)
+        self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = model_name)
     def setparameters(
         self,
         input=None,
@@ -85,7 +85,7 @@ class AutoMistral:
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
         if dataset_url:
-            AutoTrainaMistral(base_model=base_model, dataset_url=dataset_url, model_name=model_name)        
+            AutoTrainMistral(base_model=base_model, dataset_url=dataset_url, model_name=model_name)        
         else:
             return f"please provide url for your dataset." 
     def inferenceIO(self, prompt):
