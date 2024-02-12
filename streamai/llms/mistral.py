@@ -2,7 +2,7 @@ import subprocess, sys
 import pkg_resources
 class AutoMistral:
     def __init__(self, base_model):
-        require_install = ['accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
+        require_install = ['trl', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
     
         installed_packages = [pkg.key for pkg in pkg_resources.working_set]
         packages_to_install = [package for package in require_install if package not in installed_packages]
@@ -10,11 +10,11 @@ class AutoMistral:
         if packages_to_install:
             subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
     
-        from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
+        from streamai.mistral import Loadmodel, Evalmodel, AutoTrainalpacalora
         self.info = {
-            "modelname":"alpacalora",
+            "modelname":"mistral",
             "initialization_args":{
-                "base_model*":"path to base model (eg. decapoda/llama-7b)",
+                "base_model*":"path to base model (eg. mistralai/Mistral-7B-v0.1)",
             },
             "dataset":{
                 "format":".json",
@@ -27,11 +27,11 @@ class AutoMistral:
             },
             "available_methods":{
                 "loadmodels":{
-                    "args":["lora_wights"],
+                    "args":["lora_wieghts"],
                     "desc":"call this to load model immediately after object creation"
                 },
                 "train":{
-                    "arg":["datasetpath"],
+                    "arg":["dataset_url"],
                     "desc":"training model directly with correct formatted dataset(dataset instruction WIP)"
                 },
                 "inferenceIO":{
@@ -56,7 +56,7 @@ class AutoMistral:
         self.stream_output=False
 
     def loadmodel(self, lora_weights:str=""):
-        from streamai.alpacalora import Loadmodel
+        from streamai.mistral import Loadmodel
         self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = lora_weights)
     def setparameters(
         self,
@@ -75,7 +75,7 @@ class AutoMistral:
         self.num_beams=num_beams
         self.max_new_tokens=max_new_tokens
         self.stream_output=stream_output
-    def train(self, base_model:str="decapoda-research/llama-7b-hf", dataset_url:str=None, model_name:str="alpacafinetuned"):
+    def train(self, base_model:str="mistralai/Mistral-7B-v0.1", dataset_url:str=None, model_name:str="mistralfinetuned"):
         from streamai.mistral import AutoTrainMistral
 
         #WIP
@@ -89,7 +89,7 @@ class AutoMistral:
         else:
             return f"please provide url for your dataset." 
     def inferenceIO(self, prompt):
-        from streamai.alpacalora import Evalmodel
+        from streamai.mistral import Evalmodel
         if self.model:
             self.generation = ""
             for output in Evalmodel(

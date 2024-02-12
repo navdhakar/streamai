@@ -1,4 +1,6 @@
 from streamai.mistral.mistral7b import train as TrainMistral7b
+from streamai.utils.upload import upload_folder 
+from streamai.utils.download import download_file    
 import requests
 import fire
 import subprocess
@@ -9,11 +11,11 @@ import os
 available_models = [{"mistral7b":"a 7b parameter version of mistral"}, {"mistral8x7b":"mistral model based on mixture of experts(moe) having 8 seperate 7b models"}]
 def Trainmodel( 
     model_name:str="",
-    base_model:str="decapoda-research/llama-7b-hf",
+    base_model:str="mistralai/Mistral-7B-v0.1f",
     dataset_url:str=None,
     scrol_token:str=None
     ):
-    output_dir_base = model_name if model_name else "./alpaca-lora-finetuned"
+    output_dir_base = model_name if model_name else "./mistral7b-finetuned"
     output_dir = f"{output_dir_base}"
     download_file(dataset_url, "dataset.json")
     val_set_size = 50
@@ -36,9 +38,9 @@ def Trainmodel(
                 # print("uploading finetuned model to storage")
                 # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
             }
-            if(base_model == 'mistral7b'){
+            if(base_model == 'mistralai/Mistral-7B-v0.1b'){
                 print('training mistral 7b model')
-                # train(base_model="decapoda-research/llama-7b-hf", data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size)
+                TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1f", dataset_path='dataset.json', output_dir=f"{output_dir}")
                 # print("uploading finetuned model to storage")
                 # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
             }
@@ -64,13 +66,9 @@ def Trainmodel(
                     print("training completed.")
                     print(f"fine tuning weights are present in dir {output_dir}")
                 }
-                if(base_model == 'mistral7b'){
+                if(base_model == 'mistralai/Mistral-7B-v0.1b'){
                     print('training mistral 7b model')
-                    # train(base_model="decapoda-research/llama-7b-hf", data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size)
-                    # print("uploading finetuned model to storage")
-                    # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
-                    print("training completed.")
-                    print(f"fine tuning weights are present in dir {output_dir}")
+                    TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1f", dataset_path='dataset.json', output_dir=f"{output_dir}")
                 }
                 else:
                     print(f'this model ${base_model} is not available in library.')

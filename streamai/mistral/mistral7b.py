@@ -56,7 +56,7 @@ def print_trainable_parameters(model):
 def train(
     base_model=str:"mistralai/Mistral-7B-v0.1",
     dataset_file=str:"",
-    output_dir:=str:""
+    output_dir:=str:"",
 ):
     
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
