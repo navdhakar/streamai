@@ -58,7 +58,7 @@ def train(
     dataset_file:str="",
     output_dir:str="",
 ):
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    tokenizer = AutoTokenizer.from_pretrained(base_model)
     def tokenize_prompts(prompt):
         return tokenizer(create_prompt(prompt))
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
@@ -137,4 +137,4 @@ def train(
   eval_dataset=tokenized_val_dataset
 )
     trainer.train()
-train()
+
