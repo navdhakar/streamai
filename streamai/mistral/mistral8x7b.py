@@ -1,4 +1,3 @@
-model_id = "mistralai/Mixtral-8x7B-v0.1"
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from transformers import TrainingArguments
@@ -11,8 +10,8 @@ def create_prompt(sample):
   bos_token = "<s>"
   original_system_message = "Below is an instruction that describes a task. Write a response that appropriately completes the request."
   system_message = "[INST]Use the provided input to create an instruction that could have been used to generate the response with an LLM."
-  response = sample["prompt"].replace(original_system_message, "").replace("\n\n### Instruction\n", "").replace("\n### Response\n", "").strip()
-  input = sample["response"]
+  response = sample["output"].replace(original_system_message, "").replace("\n\n### Instruction\n", "").replace("\n### Response\n", "").strip()
+  input = sample["instruction"]
   eos_token = "</s>"
 
   full_prompt = ""
@@ -38,15 +37,6 @@ def generate_response(prompt, model):
 
   return decoded_output[0].replace(prompt, "")
     
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-def tokenize_prompts(prompt):
-    return tokenizer(create_prompt(prompt))
-instruct_tune_dataset = load_dataset("mosaicml/instruct-v3")
-train_datasets_sampled =  instruct_tune_dataset["train"].shuffle(seed=42).select(range(1000))
-eval_dataset_sampled = instruct_tune_dataset["test"].shuffle(seed=42).select(range(100))
-
-tokenized_train_dataset = train_datasets_sampled.map(tokenize_prompts)
-tokenized_val_dataset = eval_dataset_sampled.map(tokenize_prompts)
 
 def print_trainable_parameters(model):
     """
@@ -63,7 +53,20 @@ def print_trainable_parameters(model):
     )
 
     
-def train():
+def train(
+    base_model:str="mistralai/Mistral-7B-v0.1",
+    dataset_file:str="",
+    output_dir:str="",
+):
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    def tokenize_prompts(prompt):
+        return tokenizer(create_prompt(prompt))
+    train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
+    eval_dataset = load_dataset('json', data_files=dataset_file, split='train[20%:25%]')
+
+    tokenized_train_dataset = train_datasets.map(tokenize_prompts)
+    tokenized_val_dataset = eval_dataset.map(tokenize_prompts)
+
     nf4_config = BitsAndBytesConfig(
    load_in_4bit=True,
    bnb_4bit_quant_type="nf4",
@@ -71,14 +74,14 @@ def train():
    bnb_4bit_compute_dtype=torch.bfloat16
 )
     model = AutoModelForCausalLM.from_pretrained(
-    model_id,
+    base_model,
     device_map='auto',
     quantization_config=nf4_config,
     use_cache=False,
     attn_implementation="flash_attention_2"
 
 )
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    tokenizer = AutoTokenizer.from_pretrained(base_model)
 
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
@@ -107,7 +110,7 @@ def train():
         model.is_parallelizable = True
         model.model_parallel = True
     args = TrainingArguments(
-  output_dir = "Mixtral_Alpace_v2",
+  output_dir = output_dir,
   #num_train_epochs=5,
   max_steps = 1000, # comment out this line if you want to train in epochs
   per_device_train_batch_size = 32,

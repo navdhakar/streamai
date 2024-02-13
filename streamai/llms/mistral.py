@@ -27,8 +27,8 @@ class AutoMistral:
             },
             "available_methods":{
                 "loadmodels":{
-                    "args":["lora_wieghts"],
-                    "desc":"call this to load model immediately after object creation"
+                    "args":["model_name"],
+                    "desc":"call this to load model finetuned model with lora weights"
                 },
                 "train":{
                     "arg":["dataset_url"],

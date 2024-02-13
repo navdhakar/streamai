@@ -1,4 +1,5 @@
 from streamai.mistral.mistral7b import train as TrainMistral7b
+from streamai.mistral.mistral8x7b import train as TrainMistral8x7b
 from streamai.utils.upload import upload_folder 
 from streamai.utils.download import download_file    
 import requests
@@ -8,7 +9,7 @@ import json
 from tqdm import tqdm
 import os
 
-available_models = [{"mistral7b":"a 7b parameter version of mistral"}, {"mistral8x7b":"mistral model based on mixture of experts(moe) having 8 seperate 7b models"}]
+available_models = [{"mistralai/Mistral-7B-v0.1":"a 7b parameter version of mistral"}, {"mistralai/Mixtral-8x7B-v0.1":"mistral model based on mixture of experts(moe) having 8 seperate 7b models"}]
 def Trainmodel( 
     model_name:str="",
     base_model:str="mistralai/Mistral-7B-v0.1f",
@@ -56,9 +57,9 @@ def Trainmodel(
                 json_object = json.load(openfile)
                 val_set_size = int(len(json_object)*0.1)
 
-                if(base_model == 'mistral8x7b'):
+                if(base_model == 'mistralai/Mixtral-8x7B-v0.1'):
                     print("training mistral moe")
-                    # train(base_model="decapoda-research/llama-7b-hf", data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size)
+                    TrainMistral8x7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}")
                     # print("uploading finetuned model to storage")
                     # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
                     print("training completed.")
@@ -66,6 +67,8 @@ def Trainmodel(
                 if(base_model == 'mistralai/Mistral-7B-v0.1'):
                     print('training mistral 7b model')
                     TrainMistral7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}")
+                    print("training completed.")
+                    print(f"fine tuning weights are present in dir {output_dir}")
                 else:
                     print(f'this model ${base_model} is not available in library.')
                     print(f'please select from the availabel model: ${available_models}')
