@@ -3,13 +3,13 @@ import pkg_resources
 class Autoalpacalora:
     def __init__(self, base_model):
         require_install = ['accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm']
-    
+
         installed_packages = [pkg.key for pkg in pkg_resources.working_set]
         packages_to_install = [package for package in require_install if package not in installed_packages]
-    
+
         if packages_to_install:
             subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
-    
+
         from streamai.alpacalora import Loadmodel, Evalmodel, AutoTrainalpacalora
         self.info = {
             "modelname":"alpacalora",
@@ -44,7 +44,7 @@ class Autoalpacalora:
         }
         self.load_8bit = False
         self.base_model = base_model
-        self.prompt_template= ""  
+        self.prompt_template= ""
         self.server_name = "0.0.0.0"
         self.model = None
         self.input = None
@@ -55,7 +55,7 @@ class Autoalpacalora:
         self.max_new_tokens=128
         self.stream_output=False
 
-    def loadmodel(self, lora_weights:str=""):
+    def loadmodel(self, finetuned_weights_dir:str=""):
         from streamai.alpacalora import Loadmodel
         self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = lora_weights)
     def setparameters(
@@ -78,15 +78,15 @@ class Autoalpacalora:
     def train(self, base_model:str="", dataset_url:str=None, model_name:str="alpacafinetuned"):
         from streamai.alpacalora import AutoTrainalpacalora
         #WIP
-        #TODO: 
-        #peft(lora) training, #raw training, training metrics, 
-        #correct data path provide, 
+        #TODO:
+        #peft(lora) training, #raw training, training metrics,
+        #correct data path provide,
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
         if dataset_url:
-            AutoTrainalpacalora(base_model=self.base_model, dataset_url=dataset_url, model_name=model_name)        
+            AutoTrainalpacalora(base_model=self.base_model, dataset_url=dataset_url, model_name=model_name)
         else:
-            return f"please provide url for your dataset." 
+            return f"please provide url for your dataset."
     def inferenceIO(self, prompt):
         from streamai.alpacalora import Evalmodel
         if self.model:
@@ -104,7 +104,7 @@ class Autoalpacalora:
                                 stream_output=self.stream_output,
             ):
                 self.generation = self.generation + output
-            # this out put should always be a string.                
+            # this out put should always be a string.
             return self.generation
         else:
             return "Please load the model first(modelinstance.loadmodel())."

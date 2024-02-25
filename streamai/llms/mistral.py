@@ -3,13 +3,13 @@ import pkg_resources
 class AutoMistral:
     def __init__(self, base_model):
         require_install = ['trl', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm', 'torch==2.2.0']
-    
+
         installed_packages = [pkg.key for pkg in pkg_resources.working_set]
         packages_to_install = [package for package in require_install if package not in installed_packages]
-    
+
         if packages_to_install:
             subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
-    
+
         from streamai.mistral import Loadmodel, Evalmodel, AutoTrainMistral
         self.info = {
             "modelname":"mistral",
@@ -44,7 +44,7 @@ class AutoMistral:
         }
         self.load_8bit = False
         self.base_model = base_model
-        self.prompt_template= ""  
+        self.prompt_template= ""
         self.server_name = "0.0.0.0"
         self.model = None
         self.input = None
@@ -55,7 +55,7 @@ class AutoMistral:
         self.max_new_tokens=128
         self.stream_output=False
 
-    def loadmodel(self, model_name:str=""):
+    def loadmodel(self, finetuned_weights_dir:str=""):
         from streamai.mistral import Loadmodel
         self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = model_name)
     def setparameters(
@@ -79,15 +79,15 @@ class AutoMistral:
         from streamai.mistral import AutoTrainMistral
 
         #WIP
-        #TODO: 
-        #peft(lora) training, #raw training, training metrics, 
-        #correct data path provide, 
+        #TODO:
+        #peft(lora) training, #raw training, training metrics,
+        #correct data path provide,
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
         if dataset_url:
-            AutoTrainMistral(base_model=base_model, dataset_url=dataset_url, model_name=model_name)        
+            AutoTrainMistral(base_model=base_model, dataset_url=dataset_url, model_name=model_name)
         else:
-            return f"please provide url for your dataset." 
+            return f"please provide url for your dataset."
     def inferenceIO(self, prompt):
         from streamai.mistral import Evalmodel
         if self.model:
@@ -105,7 +105,7 @@ class AutoMistral:
                                 stream_output=self.stream_output,
             ):
                 self.generation = self.generation + output
-            # this out put should always be a string.                
+            # this out put should always be a string.
             return self.generation
         else:
             return "Please load the model first(modelinstance.loadmodel())."
