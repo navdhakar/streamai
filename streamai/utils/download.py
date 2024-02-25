@@ -8,8 +8,12 @@ def download_file(url, local_filename):
     try:
         # Check if the URL is a local path or filename
         if os.path.exists(url):  # If it's a local path or filename
-            local_filename = url
-            print(f"Using local file: {local_filename}")
+            print(f"Using local file: {url}")
+            with open(url, 'rb') as infile:
+                content = infile.read()
+                with open(local_filename, 'wb') as outfile:
+                    outfile.write(content)
+            print(f"Content from {url} written to {local_filename}")
         else:  # If it's a URL
             print("Downloading file from URL...")
             with requests.get(url, stream=True) as r:

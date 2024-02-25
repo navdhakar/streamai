@@ -15,7 +15,7 @@ def formatting_func(sample):
   bos_token = "<s>"
   original_system_message = "Below is an instruction that describes a task. Write a response that appropriately completes the request."
   system_message = "[INST]Use the provided input to create an instruction that could have been used to generate the response with an LLM."
-  response = sample["output"].replace(original_system_message, "").replace("\n\n### Instruction\n", "").replace("\n### Response\n", "").strip()
+  response = str(sample["output"]).replace(original_system_message, "").replace("\n\n### Instruction\n", "").replace("\n### Response\n", "").strip()
   input = sample["instruction"]
   eos_token = "</s>"
 
