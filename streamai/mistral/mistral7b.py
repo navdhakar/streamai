@@ -58,15 +58,15 @@ def train(
     dataset_file:str="",
     output_dir:str="",
 ):
-    
+
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
-    eval_dataset = load_dataset('json', data_files=dataset_file, split='train[20%:25%]')
-    
+    eval_dataset = load_dataset('json', data_files=dataset_file, split='train[20%:100%]')
+
     fsdp_plugin = FullyShardedDataParallelPlugin(
         state_dict_config=FullStateDictConfig(offload_to_cpu=True, rank0_only=False),
         optim_state_dict_config=FullOptimStateDictConfig(offload_to_cpu=True, rank0_only=False),
     )
-    
+
     accelerator = Accelerator(fsdp_plugin=fsdp_plugin)
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
@@ -74,7 +74,7 @@ def train(
         bnb_4bit_quant_type="nf4",
         bnb_4bit_compute_dtype=torch.bfloat16
     )
-    
+
     model = AutoModelForCausalLM.from_pretrained(base_model, quantization_config=bnb_config, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(
     base_model,
@@ -115,7 +115,7 @@ def train(
     model = accelerator.prepare_model(model)
     project = "journal-finetune"
     base_model_name = "mistral"
-    
+
     trainer = SFTTrainer(
         model=model,
         train_dataset=tokenized_train_dataset,
@@ -127,7 +127,7 @@ def train(
             per_device_train_batch_size=2,
             gradient_accumulation_steps=1,
             gradient_checkpointing=False,
-            max_steps=20,
+            max_steps=-1,
             learning_rate=2.5e-5, # Want a small lr for finetuning
             bf16=True,
             optim="paged_adamw_8bit",
@@ -142,7 +142,7 @@ def train(
         data_collator=transformers.DataCollatorForLanguageModeling(tokenizer, mlm=False),
         packing= True,
     )
-    
+
     model.config.use_cache = False
     trainer.train()
     trainer.model.save_pretrained(output_dir)
