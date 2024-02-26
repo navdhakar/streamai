@@ -1,5 +1,7 @@
 import subprocess, sys
 import pkg_resources
+
+from streamai.alpacalora import finetune
 class AutoMistral:
     def __init__(self, base_model):
         require_install = ['trl', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm', 'torch==2.2.0']
@@ -57,7 +59,7 @@ class AutoMistral:
 
     def loadmodel(self, finetuned_weights_dir:str=""):
         from streamai.mistral import Loadmodel
-        self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = model_name)
+        self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = finetuned_weights_dir)
     def setparameters(
         self,
         input=None,

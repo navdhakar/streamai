@@ -57,7 +57,7 @@ class Autoalpacalora:
 
     def loadmodel(self, finetuned_weights_dir:str=""):
         from streamai.alpacalora import Loadmodel
-        self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = lora_weights)
+        self.model = Loadmodel(load_8bit = self.load_8bit, base_model = self.base_model, lora_weights = finetuned_weights_dir)
     def setparameters(
         self,
         input=None,

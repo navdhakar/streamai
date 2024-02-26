@@ -1,5 +1,5 @@
 ## 🌩️ Stream AI easily
-### streamai let's you serve any AI agents/model(currently llms only) easily as api and integrate in frontend quickly.
+### train, finetune any open source model and deploy as api in less than 10 lines of python.
 - sometime need to replace cudua lib in bitsandbytes with cuda lib 117 version(bnb bug).
 ```bash
 cp venv/lib/python3.8/site-packages/bitsandbytes/libbitsandbytes_cuda117.so venv/lib/python3.8/site-packages/bitsandbytes/libbitsandbytes_cpu.so
@@ -67,11 +67,9 @@ finetunedmodel = endpointIO(modelinstance.inferenceIO)
 finetunedmodel.run()
 ```
 todo:
-- [x] test alpaca lora with deployment
-- [x] fix dynamic installation issue(temp fix)
-- [x] fix(api endpoint start but does not work on cloud probably firewall issue)
-- [x] test finetuning of alpacalora.
-- [] add both generation and training test cases for mistral.
+- [ ] add input for num_train_epochs for finetuning.
+- [ ] add input train test split.
+- [ ] add both generation and training test cases for mistral.
 - [ ] add nginx reverse proxy.
 - [ ] add tests cases.
 - [ ] add endpoint for info about deployed model
