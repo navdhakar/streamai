@@ -3,7 +3,7 @@ import pkg_resources
 
 class AutoMistral:
     def __init__(self, base_model):
-        require_install = ['trl', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm', 'torch==2.2.0']
+        require_install = ['trl', 'flash-attn', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm', 'torch==2.2.0']
 
         installed_packages = [pkg.key for pkg in pkg_resources.working_set]
         packages_to_install = [package for package in require_install if package not in installed_packages]
@@ -13,7 +13,8 @@ class AutoMistral:
 
         from streamai.mistral import Loadmodel, Evalmodel, AutoTrainMistral
         self.info = {
-            "modelname":"mistral",
+            "model_family":"mistral",
+            "available_models":['mistralai/Mixtral-8x7B-v0.1', 'mistralai/Mistral-7B-v0.1'],
             "initialization_args":{
                 "base_model*":"path to base model (eg. mistralai/Mistral-7B-v0.1)",
             },
@@ -86,7 +87,7 @@ class AutoMistral:
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
         if dataset_url:
-            AutoTrainMistral(base_model=base_model, dataset_url=dataset_url, model_name=model_name)
+            AutoTrainMistral(base_model=self.base_model, dataset_url=dataset_url, model_name=model_name)
         else:
             return f"please provide url for your dataset."
     def inferenceIO(self, prompt):

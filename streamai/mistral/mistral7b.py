@@ -13,9 +13,8 @@ import fire
 
 def formatting_func(sample):
   bos_token = "<s>"
-  original_system_message = "Below is an instruction that describes a task. Write a response that appropriately completes the request."
-  system_message = "[INST]Use the provided input to create an instruction that could have been used to generate the response with an LLM."
-  response = str(sample["output"]).replace(original_system_message, "").replace("\n\n### Instruction\n", "").replace("\n### Response\n", "").strip()
+  system_message = "[INST]"
+  response = str(sample["output"])
   input = sample["instruction"]
   eos_token = "</s>"
 
@@ -84,7 +83,12 @@ def train(
 )
     tokenizer.pad_token = tokenizer.eos_token
     def generate_and_tokenize_prompt(prompt):
-        return tokenizer(formatting_func(prompt))
+        return tokenizer(formatting_func(prompt),
+        truncation=True,
+        max_length=max_length,
+        padding="max_length",
+        )
+
     tokenized_train_dataset = train_dataset.map(generate_and_tokenize_prompt)
     tokenized_val_dataset = eval_dataset.map(generate_and_tokenize_prompt)
     model.gradient_checkpointing_enable()

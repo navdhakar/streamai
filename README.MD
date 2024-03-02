@@ -68,7 +68,8 @@ finetunedmodel.run()
 ```
 todo:
 - [ ] add input for num_train_epochs for finetuning.
-- [ ] add input train test split.
+- [ ] add input for train test split.
+- [ ] add input for max_seq_length.
 - [ ] add both generation and training test cases for mistral.
 - [ ] add nginx reverse proxy.
 - [ ] add tests cases.
