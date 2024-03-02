@@ -5,12 +5,11 @@ from trl import SFTTrainer
 
 from datasets import load_dataset
 import torch
-
-def create_prompt(sample):
+max_length = 512
+def formatting_func(sample):
   bos_token = "<s>"
-  original_system_message = "Below is an instruction that describes a task. Write a response that appropriately completes the request."
-  system_message = "[INST]Use the provided input to create an instruction that could have been used to generate the response with an LLM."
-  response = sample["output"].replace(original_system_message, "").replace("\n\n### Instruction\n", "").replace("\n### Response\n", "").strip()
+  system_message = "[INST]"
+  response = str(sample["output"])
   input = sample["instruction"]
   eos_token = "</s>"
 
@@ -60,11 +59,15 @@ def train(
 ):
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     def tokenize_prompts(prompt):
-        return tokenizer(create_prompt(prompt))
+        return tokenizer(formatting_func(prompt),
+        truncation=True,
+        max_length=max_length,
+        padding="max_length",
+        )
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
     eval_dataset = load_dataset('json', data_files=dataset_file, split='train[20%:100%]')
 
-    tokenized_train_dataset = train_datasets.map(tokenize_prompts)
+    tokenized_train_dataset = train_dataset.map(tokenize_prompts)
     tokenized_val_dataset = eval_dataset.map(tokenize_prompts)
 
     nf4_config = BitsAndBytesConfig(
@@ -131,7 +134,7 @@ def train(
   max_seq_length=max_seq_length,
   tokenizer=tokenizer,
   packing=True,
-  formatting_func=create_prompt, # this will aplly the create_prompt mapping to all training and test dataset
+  formatting_func=formatting_func, # this will aplly the create_prompt mapping to all training and test dataset
   args=args,
   train_dataset=tokenized_train_dataset,
   eval_dataset=tokenized_val_dataset
