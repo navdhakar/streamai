@@ -1,9 +1,10 @@
 ## 🌩️ Stream AI easily
 ### train, finetune any open source model and deploy as api in less than 10 lines of python.
-- sometime need to replace cudua lib in bitsandbytes with cuda lib 117 version(bnb bug).
-```bash
-cp venv/lib/python3.8/site-packages/bitsandbytes/libbitsandbytes_cuda117.so venv/lib/python3.8/site-packages/bitsandbytes/libbitsandbytes_cpu.so
-```
+## models:
+- [x] llama-7b, 13b, 70b
+- [x] mistral-7b
+- [x] mixtral-8x7b
+- [ ] gemma-7b
 
 #### run base model without creating api.
 ```py
@@ -74,3 +75,8 @@ todo:
 - [ ] add nginx reverse proxy.
 - [ ] add tests cases.
 - [ ] add endpoint for info about deployed model
+
+- sometime need to replace cudua lib in bitsandbytes with cuda lib 117 version(bnb bug).
+```bash
+cp venv/lib/python3.8/site-packages/bitsandbytes/libbitsandbytes_cuda117.so venv/lib/python3.8/site-packages/bitsandbytes/libbitsandbytes_cpu.so
+```
