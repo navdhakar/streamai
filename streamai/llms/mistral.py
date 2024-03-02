@@ -3,7 +3,7 @@ import pkg_resources
 
 class AutoMistral:
     def __init__(self, base_model):
-        require_install = ['trl', 'flash-attn', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm', 'torch==2.2.0']
+        require_install = ['trl', 'accelerate', 'appdirs', 'loralib', 'bitsandbytes', 'black', 'black[jupyter]', 'datasets', 'fire', 'git+https://github.com/huggingface/peft.git', 'transformers>=2.28.0', 'sentencepiece', 'gradio', 'scipy', 'tqdm', 'torch==2.2.0']
 
         installed_packages = [pkg.key for pkg in pkg_resources.working_set]
         packages_to_install = [package for package in require_install if package not in installed_packages]
