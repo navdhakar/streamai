@@ -5,7 +5,7 @@ from trl import SFTTrainer
 
 from datasets import load_dataset
 import torch
-max_length = 512
+max_length = 2000
 def formatting_func(sample):
   bos_token = "<s>"
   system_message = "[INST]"
@@ -58,6 +58,8 @@ def train(
     output_dir:str="",
 ):
     tokenizer = AutoTokenizer.from_pretrained(base_model)
+    if tokenizer.pad_token is None:
+        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     def tokenize_prompts(prompt):
         return tokenizer(formatting_func(prompt),
         truncation=True,
