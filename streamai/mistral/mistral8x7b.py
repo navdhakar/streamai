@@ -5,7 +5,8 @@ from trl import SFTTrainer
 
 from datasets import load_dataset
 import torch
-max_length = 2000
+
+
 def formatting_func(sample):
   bos_token = "<s>"
   system_message = "[INST]"

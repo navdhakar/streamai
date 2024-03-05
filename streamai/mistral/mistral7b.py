@@ -124,7 +124,7 @@ def train(
             per_device_train_batch_size=2,
             gradient_accumulation_steps=1,
             gradient_checkpointing=False,
-            num_train_epochs=num_train_epochs
+            num_train_epochs=num_train_epochs,
             # max_steps=-1,
             learning_rate=2.5e-5, # Want a small lr for finetuning
             bf16=True,
