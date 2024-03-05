@@ -27,17 +27,7 @@ def formatting_func(sample):
   full_prompt += eos_token
 
   return full_prompt
-max_length = 512 # This was an appropriate max length for my dataset
-
-def generate_and_tokenize_prompt2(prompt):
-    result = tokenizer(
-        formatting_func(prompt),
-        truncation=True,
-        max_length=max_length,
-        padding="max_length",
-    )
-    result["labels"] = result["input_ids"].copy()
-    return result
+# max_length = 512 # This was an appropriate max length for my dataset
 
 def print_trainable_parameters(model):
     """
@@ -56,6 +46,8 @@ def train(
     base_model:str="mistralai/Mistral-7B-v0.1",
     dataset_file:str="",
     output_dir:str="",
+    num_train_epochs:int=5,
+    max_length:int=512
 ):
 
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
@@ -124,6 +116,7 @@ def train(
         model=model,
         train_dataset=tokenized_train_dataset,
         eval_dataset=tokenized_val_dataset,
+        max_seq_length=max_length,
         formatting_func=formatting_func,
         args=transformers.TrainingArguments(
             output_dir=output_dir,
@@ -131,7 +124,8 @@ def train(
             per_device_train_batch_size=2,
             gradient_accumulation_steps=1,
             gradient_checkpointing=False,
-            max_steps=-1,
+            num_train_epochs=num_train_epochs
+            # max_steps=-1,
             learning_rate=2.5e-5, # Want a small lr for finetuning
             bf16=True,
             optim="paged_adamw_8bit",

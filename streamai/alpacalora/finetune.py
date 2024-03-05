@@ -37,6 +37,8 @@ def train(
     learning_rate: float = 3e-4,
     cutoff_len: int = 256,
     val_set_size: int = 2000,
+    num_train_epochs:int=5,
+    max_length:int=512,
     # lora hyperparams
     lora_r: int = 8,
     lora_alpha: int = 16,
@@ -129,7 +131,7 @@ def train(
         result = tokenizer(
             prompt,
             truncation=True,
-            max_length=cutoff_len,
+            max_length=max_length,
             padding=False,
             return_tensors=None,
         )
@@ -237,7 +239,7 @@ def train(
             per_device_train_batch_size=micro_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
             warmup_steps=100,
-            num_train_epochs=num_epochs,
+            num_train_epochs=num_train_epochs,
             learning_rate=learning_rate,
             fp16=True,
             logging_steps=10,

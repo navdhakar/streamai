@@ -48,19 +48,21 @@ def download_file(url, local_filename):
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
         with open(local_filename, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192): 
+            for chunk in r.iter_content(chunk_size=8192):
                 # If you have chunk encoded response uncomment if
                 # and set chunk_size parameter to None.
-                #if chunk: 
+                #if chunk:
                 f.write(chunk)
     print("download finished")
     return local_filename
 
-def Trainmodel( 
+def Trainmodel(
     model_name:str="",
     base_model:str="decapoda-research/llama-7b-hf",
     dataset_url:str=None,
-    scrol_token:str=None
+    scrol_token:str=None,
+    num_train_epochs:int=None,
+    max_length:int=None
     ):
     output_dir_base = model_name if model_name else "./alpaca-lora-finetuned"
     output_dir = f"{output_dir_base}"
@@ -79,8 +81,8 @@ def Trainmodel(
             # Reading from json file
             json_object = json.load(openfile)
             val_set_size = int(len(json_object)*0.1)
-                
-            train(base_model="decapoda-research/llama-7b-hf", data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size)
+
+            train(base_model="decapoda-research/llama-7b-hf", data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size, num_train_epochs=num_train_epochs, max_length=max_length)
             print("uploading finetuned model to storage")
             upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
             # print(res)
@@ -92,8 +94,8 @@ def Trainmodel(
                 # Reading from json file
                 json_object = json.load(openfile)
                 val_set_size = int(len(json_object)*0.1)
-                    
-                train(base_model=base_model, data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size)
+
+                train(base_model=base_model, data_path='dataset.json', output_dir=f"{output_dir}", val_set_size=val_set_size, num_train_epochs=num_train_epochs, max_length=max_length)
                 print("training completed.")
                 print(f"fine tuning weights are present in dir {output_dir}")
         elif(user_input == 'n'):

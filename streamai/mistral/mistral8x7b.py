@@ -56,6 +56,8 @@ def train(
     base_model:str="mistralai/Mistral-7B-v0.1",
     dataset_file:str="",
     output_dir:str="",
+    num_train_epochs:int=5,
+    max_length:int=512
 ):
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     if tokenizer.pad_token is None:
@@ -73,72 +75,76 @@ def train(
     tokenized_val_dataset = eval_dataset.map(tokenize_prompts)
 
     nf4_config = BitsAndBytesConfig(
-   load_in_4bit=True,
-   bnb_4bit_quant_type="nf4",
-   bnb_4bit_use_double_quant=True,
-   bnb_4bit_compute_dtype=torch.bfloat16
-)
-    model = AutoModelForCausalLM.from_pretrained(
-    base_model,
-    device_map='auto',
-    quantization_config=nf4_config,
-    use_cache=False,
-    attn_implementation="flash_attention_2"
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_compute_dtype=torch.bfloat16
+    )
 
-)
+    model = AutoModelForCausalLM.from_pretrained(
+        base_model,
+        device_map='auto',
+        quantization_config=nf4_config,
+        use_cache=False,
+        attn_implementation="flash_attention_2"
+
+    )
     tokenizer = AutoTokenizer.from_pretrained(base_model)
 
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
     peft_config = LoraConfig(
-    lora_alpha=16,
-    lora_dropout=0.1,
-    r=64,
-    bias="none",
-        target_modules=[
-        "q_proj",
-        "k_proj",
-        "v_proj",
-        "o_proj",
-        "gate_proj",
-        "up_proj",
-        "down_proj",
-        "lm_head",
-    ],
-    task_type="CAUSAL_LM"
-)
+        lora_alpha=16,
+        lora_dropout=0.1,
+        r=64,
+        bias="none",
+            target_modules=[
+            "q_proj",
+            "k_proj",
+            "v_proj",
+            "o_proj",
+            "gate_proj",
+            "up_proj",
+            "down_proj",
+            "lm_head",
+        ],
+        task_type="CAUSAL_LM"
+    )
     model = prepare_model_for_kbit_training(model)
     model = get_peft_model(model, peft_config)
     print_trainable_parameters(model)
+
     if torch.cuda.device_count() > 1: # If more than 1 GPU
         print(torch.cuda.device_count())
         model.is_parallelizable = True
         model.model_parallel = True
+
+
     args = TrainingArguments(
-  output_dir = output_dir,
-  #num_train_epochs=5,
-  max_steps = 1000, # comment out this line if you want to train in epochs
-  per_device_train_batch_size = 32,
-  warmup_steps = 0.03,
-  logging_steps=10,
-  save_strategy="epoch",
-  #evaluation_strategy="epoch",
-  evaluation_strategy="steps",
-  eval_steps=10, # comment out this line if you want to evaluate at the end of each epoch
-  learning_rate=2.5e-5,
-  bf16=True,
-  # lr_scheduler_type='constant',
-)
-    max_seq_length = 1024
+        output_dir = output_dir,
+        num_train_epochs=num_train_epochs,
+        # max_steps = 1000, # comment out this line if you want to train in epochs
+        per_device_train_batch_size = 32,
+        warmup_steps = 0.03,
+        logging_steps=10,
+        save_strategy="epoch",
+        #evaluation_strategy="epoch",
+        evaluation_strategy="steps",
+        eval_steps=10, # comment out this line if you want to evaluate at the end of each epoch
+        learning_rate=2.5e-5,
+        bf16=True,
+        # lr_scheduler_type='constant',
+    )
+
     trainer = SFTTrainer(
-  model=model,
-  peft_config=peft_config,
-  max_seq_length=max_seq_length,
-  tokenizer=tokenizer,
-  packing=True,
-  formatting_func=formatting_func, # this will aplly the create_prompt mapping to all training and test dataset
-  args=args,
-  train_dataset=tokenized_train_dataset,
-  eval_dataset=tokenized_val_dataset
-)
+        model=model,
+        peft_config=peft_config,
+        max_seq_length=max_length,
+        tokenizer=tokenizer,
+        packing=True,
+        formatting_func=formatting_func, # this will aplly the create_prompt mapping to all training and test dataset
+        args=args,
+        train_dataset=tokenized_train_dataset,
+        eval_dataset=tokenized_val_dataset
+    )
     trainer.train()

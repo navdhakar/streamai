@@ -15,7 +15,9 @@ def Trainmodel(
     model_name:str="",
     base_model:str="mistralai/Mistral-7B-v0.1f",
     dataset_url:str=None,
-    scrol_token:str=None
+    scrol_token:str=None,
+    num_train_epochs:int=None,
+    max_length:int=None
     ):
     output_dir_base = model_name if model_name else "./mistral7b-finetuned"
     output_dir = f"{output_dir_base}"
@@ -44,7 +46,7 @@ def Trainmodel(
                 # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
             if(base_model == 'mistralai/Mistral-7B-v0.1'):
                 print('training mistral 7b model')
-                TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1", dataset_path='dataset.json', output_dir=f"{output_dir}")
+                TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1", dataset_path='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length)
                 # print("uploading finetuned model to storage")
                 # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
             else:
@@ -67,14 +69,14 @@ def Trainmodel(
                         subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
 
                     print("training mistral moe")
-                    TrainMistral8x7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}")
+                    TrainMistral8x7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length)
                     # print("uploading finetuned model to storage")
                     # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
                     print("training completed.")
                     print(f"fine tuning weights are present in dir {output_dir}")
                 if(base_model == 'mistralai/Mistral-7B-v0.1'):
                     print('training mistral 7b model')
-                    TrainMistral7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}")
+                    TrainMistral7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length)
                     print("training completed.")
                     print(f"fine tuning weights are present in dir {output_dir}")
                 else:

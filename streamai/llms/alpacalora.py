@@ -75,7 +75,7 @@ class Autoalpacalora:
         self.num_beams=num_beams
         self.max_new_tokens=max_new_tokens
         self.stream_output=stream_output
-    def train(self, base_model:str="", dataset_url:str=None, model_name:str="alpacafinetuned"):
+    def train(self, base_model:str="", dataset_url:str=None, model_name:str="alpacafinetuned", num_train_epochs:int=5, max_length:int=512):
         from streamai.alpacalora import AutoTrainalpacalora
         #WIP
         #TODO:
@@ -84,7 +84,7 @@ class Autoalpacalora:
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
         if dataset_url:
-            AutoTrainalpacalora(base_model=self.base_model, dataset_url=dataset_url, model_name=model_name)
+            AutoTrainalpacalora(base_model=self.base_model, dataset_url=dataset_url, model_name=model_name, num_train_epochs=num_train_epochs, max_length=max_length)
         else:
             return f"please provide url for your dataset."
     def inferenceIO(self, prompt):
