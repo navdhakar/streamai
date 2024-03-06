@@ -147,7 +147,7 @@ def train(
     trainer = SFTTrainer(
         model=model,
         peft_config=peft_config,
-        # max_seq_length=max_length,
+        max_seq_length=max_length,
         tokenizer=tokenizer,
         packing=True,
         formatting_func=formatting_func, # this will aplly the create_prompt mapping to all training and test dataset

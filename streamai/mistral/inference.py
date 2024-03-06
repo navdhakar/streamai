@@ -17,10 +17,6 @@ except:  # noqa: E722
     pass
 
 
-mistral_finetune_weights = 'mistral-journal-finetune/checkpoint-25'
-base_model = "mistralai/Mistral-7B-v0.1" #bn22/Mistral-7B-Instruct-v0.1-sharded
-
-
 from streamai.mistral.utils.callbacks import Iteratorize, Stream
 
 
@@ -41,31 +37,44 @@ def main(
     tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
+    nf4_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_compute_dtype=torch.bfloat16
+    )
     if lora_weights:
         print("loading with finuted lora weights")
         if device == "cuda":
+            print("loading cuda")
             base_model_reload = AutoModelForCausalLM.from_pretrained(
-                base_model, low_cpu_mem_usage=True,
-                return_dict=True,torch_dtype=torch.bfloat16,
-                device_map="auto",
+                base_model,
+                device_map='auto',
+                quantization_config=nf4_config,
+                use_cache=False,
+                attn_implementation="flash_attention_2"
                 )
             model = PeftModel.from_pretrained(base_model_reload, lora_weights)
             model = model.merge_and_unload()
         elif device == "mps":
 
             base_model_reload = AutoModelForCausalLM.from_pretrained(
-                base_model, low_cpu_mem_usage=True,
-                return_dict=True,torch_dtype=torch.bfloat16,
-                device_map={"": device},
+                base_model,
+                device_map='auto',
+                quantization_config=nf4_config,
+                use_cache=False,
+                attn_implementation="flash_attention_2"
                 )
             model = PeftModel.from_pretrained(base_model_reload, lora_weights)
             model = model.merge_and_unload()
         else:
 
             base_model_reload = AutoModelForCausalLM.from_pretrained(
-                base_model, low_cpu_mem_usage=True,
-                return_dict=True,torch_dtype=torch.bfloat16,
-                device_map={"": device},
+                base_model,
+                device_map='auto',
+                quantization_config=nf4_config,
+                use_cache=False,
+                attn_implementation="flash_attention_2"
                 )
             model = PeftModel.from_pretrained(base_model_reload, lora_weights)
             model = model.merge_and_unload()
@@ -73,24 +82,30 @@ def main(
         if device == "cuda":
 
             model = AutoModelForCausalLM.from_pretrained(
-                base_model, low_cpu_mem_usage=True,
-                return_dict=True,torch_dtype=torch.bfloat16,
-                device_map="auto",
+                base_model,
+                device_map='auto',
+                quantization_config=nf4_config,
+                use_cache=False,
+                attn_implementation="flash_attention_2"
                 )
             
         elif device == "mps":
 
             model = AutoModelForCausalLM.from_pretrained(
-                base_model, low_cpu_mem_usage=True,
-                return_dict=True,torch_dtype=torch.bfloat16,
-                device_map={"": device},
+                base_model,
+                device_map='auto',
+                quantization_config=nf4_config,
+                use_cache=False,
+                attn_implementation="flash_attention_2"
                 )
         else:
 
             model = AutoModelForCausalLM.from_pretrained(
-                base_model, low_cpu_mem_usage=True,
-                return_dict=True,torch_dtype=torch.bfloat16,
-                device_map={"": device},
+                base_model,
+                device_map='auto',
+                quantization_config=nf4_config,
+                use_cache=False,
+                attn_implementation="flash_attention_2"
                 )
 
 
@@ -99,8 +114,8 @@ def main(
     model.config.bos_token_id = 1
     model.config.eos_token_id = 2
 
-    if not load_8bit:
-        model.half()  # seems to fix bugs for some users.
+    # if not load_8bit:
+    #     model.half()  # seems to fix bugs for some users.
 
     model.eval()
     if torch.__version__ >= "2" and sys.platform != "win32":
