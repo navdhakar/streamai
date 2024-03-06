@@ -47,7 +47,8 @@ def train(
     dataset_file:str="",
     output_dir:str="",
     num_train_epochs:int=5,
-    max_length:int=512
+    max_length:int=512,
+    resume_checkpoint:str=None
 ):
 
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
@@ -102,6 +103,10 @@ def train(
     lora_dropout=0.05,  # Conventional
     task_type="CAUSAL_LM",
 )
+    if(resume_checkpoint):
+        print(f"resuming finetuning from checkpoint: {resume_checkpoint}")
+        model = PeftModel.from_pretrained(model, resume_checkpoint)
+        model = model.merge_and_unload()
 
     model = get_peft_model(model, config)
     print_trainable_parameters(model)

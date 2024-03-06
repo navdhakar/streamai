@@ -1,5 +1,5 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training, PeftModel
 from transformers import TrainingArguments
 from trl import SFTTrainer
 
@@ -58,7 +58,8 @@ def train(
     dataset_file:str="",
     output_dir:str="",
     num_train_epochs:int=5,
-    max_length:int=512
+    max_length:int=512,
+    resume_checkpoint:str=None
 ):
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     if tokenizer.pad_token is None:
@@ -111,8 +112,14 @@ def train(
         ],
         task_type="CAUSAL_LM"
     )
+    if(resume_checkpoint):
+        print(f"resuming finetuning from checkpoint: {resume_checkpoint}")
+        model = PeftModel.from_pretrained(model, resume_checkpoint)
+        model = model.merge_and_unload()
+
     model = prepare_model_for_kbit_training(model)
     model = get_peft_model(model, peft_config)
+        
     print_trainable_parameters(model)
 
     if torch.cuda.device_count() > 1: # If more than 1 GPU
@@ -140,7 +147,7 @@ def train(
     trainer = SFTTrainer(
         model=model,
         peft_config=peft_config,
-        max_seq_length=max_length,
+        # max_seq_length=max_length,
         tokenizer=tokenizer,
         packing=True,
         formatting_func=formatting_func, # this will aplly the create_prompt mapping to all training and test dataset
