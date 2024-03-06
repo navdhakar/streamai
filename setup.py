@@ -7,7 +7,7 @@ with open(os.path.join(directory, 'README.md'), encoding='utf-8') as f:
 
 setup(name='streamai',
       version='0.1.2',
-      description='finetune latest open source llms in less than 10 line of code.',
+      description='finetune and deploy latest open source llms on cloud in less than 10 line of code.',
       author='Navdeep Dhakar',
       license='MIT',
       long_description=long_description,
