@@ -1,5 +1,10 @@
 ## 🌩️ Stream AI easily
 ### train, finetune any open source model and deploy as api in less than 10 lines of python.
+
+### Installation
+```bash
+pip install streamai
+```
 ## models:
 - [x] llama-7b, 13b, 70b
 - [x] mistral-7b
