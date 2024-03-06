@@ -83,6 +83,8 @@ def train(
         bnb_4bit_compute_dtype=torch.bfloat16
     )
 
+    print(f"downloading base model {base_model}")
+    print("please be patient downloading models can take some time")
     model = AutoModelForCausalLM.from_pretrained(
         base_model,
         device_map='auto',
@@ -119,7 +121,7 @@ def train(
 
     model = prepare_model_for_kbit_training(model)
     model = get_peft_model(model, peft_config)
-        
+
     print_trainable_parameters(model)
 
     if torch.cuda.device_count() > 1: # If more than 1 GPU
@@ -155,6 +157,7 @@ def train(
         train_dataset=tokenized_train_dataset,
         eval_dataset=tokenized_val_dataset
     )
+    print("starting training")
     trainer.train()
     trainer.model.save_pretrained(output_dir)
 if __name__ == "__main__":

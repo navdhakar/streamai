@@ -66,6 +66,8 @@ def train(
         bnb_4bit_quant_type="nf4",
         bnb_4bit_compute_dtype=torch.bfloat16
     )
+    print(f"downloading base model {base_model}")
+    print("please be patient downloading models can take some time")
 
     model = AutoModelForCausalLM.from_pretrained(base_model, quantization_config=bnb_config, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(
@@ -147,7 +149,8 @@ def train(
     )
 
     model.config.use_cache = False
+    print("starting training")
     trainer.train()
     trainer.model.save_pretrained(output_dir)
 if __name__ == "__main__":
-    fire.Fire(Trainmodel)
+    fire.Fire(train)
