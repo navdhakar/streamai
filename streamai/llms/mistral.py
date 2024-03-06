@@ -90,7 +90,7 @@ class AutoMistral:
             AutoTrainMistral(base_model=self.base_model, dataset_url=dataset_url, model_name=model_name, num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint)
         else:
             return f"please provide url for your dataset."
-    def inferenceIO(self, prompt):
+    def inferenceIO(self, prompt, max_new_tokens:int=128):
         from streamai.mistral import Evalmodel
         if self.model:
             self.generation = ""
@@ -103,7 +103,7 @@ class AutoMistral:
                                 top_p=self.top_p,
                                 top_k=self.top_k,
                                 num_beams=self.num_beams,
-                                max_new_tokens=self.max_new_tokens,
+                                max_new_tokens = max_new_tokens,
                                 stream_output=self.stream_output,
             ):
                 self.generation = self.generation + output
