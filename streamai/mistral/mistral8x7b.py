@@ -5,7 +5,7 @@ from trl import SFTTrainer
 
 from datasets import load_dataset
 import torch
-
+import fire
 
 def formatting_func(sample):
   bos_token = "<s>"
@@ -149,3 +149,6 @@ def train(
         eval_dataset=tokenized_val_dataset
     )
     trainer.train()
+    trainer.model.save_pretrained(output_dir)
+if __name__ == "__main__":
+    fire.Fire(train)
