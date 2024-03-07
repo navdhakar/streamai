@@ -59,7 +59,8 @@ def train(
     output_dir:str="",
     num_train_epochs:int=5,
     max_length:int=512,
-    resume_checkpoint:str=None
+    resume_checkpoint:str=None,
+    batch_size:int=None
 ):
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     if tokenizer.pad_token is None:
@@ -134,7 +135,7 @@ def train(
         output_dir = output_dir,
         num_train_epochs=num_train_epochs,
         # max_steps = 1000, # comment out this line if you want to train in epochs
-        per_device_train_batch_size = 32,
+        per_device_train_batch_size = batch_size,
         warmup_steps = 0.03,
         logging_steps=10,
         save_strategy="epoch",
