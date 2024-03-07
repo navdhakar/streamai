@@ -9,9 +9,9 @@ import fire
 
 def formatting_func(sample):
   bos_token = "<s>"
-  system_message = "[INST]"
+  system_message = "[INST]" + sample["instruction"]
   response = str(sample["output"])
-  input = sample["instruction"]
+  input = sample["input"]
   eos_token = "</s>"
 
   full_prompt = ""

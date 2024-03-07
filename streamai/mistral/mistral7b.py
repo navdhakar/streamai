@@ -13,9 +13,9 @@ import fire
 
 def formatting_func(sample):
   bos_token = "<s>"
-  system_message = "[INST]"
+  system_message = "[INST]" + sample["instruction"]
   response = str(sample["output"])
-  input = sample["instruction"]
+  input = sample["input"]
   eos_token = "</s>"
 
   full_prompt = ""
@@ -27,8 +27,6 @@ def formatting_func(sample):
   full_prompt += eos_token
 
   return full_prompt
-# max_length = 512 # This was an appropriate max length for my dataset
-
 def print_trainable_parameters(model):
     """
     Prints the number of trainable parameters in the model.
