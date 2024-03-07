@@ -68,7 +68,6 @@ def train(
     )
     print(f"downloading base model {base_model}")
     print("please be patient downloading models can take some time")
-
     model = AutoModelForCausalLM.from_pretrained(base_model, quantization_config=bnb_config, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(
     base_model,

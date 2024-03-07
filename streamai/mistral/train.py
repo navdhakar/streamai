@@ -18,7 +18,7 @@ def Trainmodel(
     scrol_token:str=None,
     num_train_epochs:int=None,
     max_length:int=None,
-    resume_checkpoint:str=None    
+    resume_checkpoint:str=None
     ):
     output_dir_base = model_name if model_name else "./mistral7b-finetuned"
     output_dir = f"{output_dir_base}"
@@ -64,7 +64,7 @@ def Trainmodel(
                 json_object = json.load(openfile)
                 val_set_size = int(len(json_object)*0.1)
 
-                if(base_model == 'mistralai/Mixtral-8x7B-v0.1'):
+                if(base_model == 'mistralai/Mixtral-8x7B-v0.1' or base_model="mistralai/Mixtral-8x7B-Instruct-v0.1"):
                     packages_to_install = ["flash-attn"]
                     if packages_to_install:
                         subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
