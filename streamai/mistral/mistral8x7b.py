@@ -130,7 +130,9 @@ def train(
         model.is_parallelizable = True
         model.model_parallel = True
 
-
+    print(f"Number of training epochs: {num_train_epochs}")
+    print(f"context length: {max_length}")
+    print(f"Batch size: {batch_size}")
     args = TrainingArguments(
         output_dir = output_dir,
         num_train_epochs=num_train_epochs,

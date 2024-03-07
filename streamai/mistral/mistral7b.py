@@ -46,7 +46,8 @@ def train(
     output_dir:str="",
     num_train_epochs:int=5,
     max_length:int=512,
-    resume_checkpoint:str=None
+    resume_checkpoint:str=None,
+    batch_size:int=None
 ):
 
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
@@ -116,6 +117,9 @@ def train(
     project = "journal-finetune"
     base_model_name = "mistral"
 
+    print(f"Number of training epochs: {num_train_epochs}")
+    print(f"context length: {max_length}")
+    print(f"Batch size: {batch_size}")
     trainer = SFTTrainer(
         model=model,
         train_dataset=tokenized_train_dataset,
@@ -125,7 +129,7 @@ def train(
         args=transformers.TrainingArguments(
             output_dir=output_dir,
             warmup_steps=1,
-            per_device_train_batch_size=2,
+            per_device_train_batch_size=batch_size,
             gradient_accumulation_steps=1,
             gradient_checkpointing=False,
             num_train_epochs=num_train_epochs,
