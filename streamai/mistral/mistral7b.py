@@ -4,7 +4,7 @@ from torch.distributed.fsdp.fully_sharded_data_parallel import FullOptimStateDic
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import prepare_model_for_kbit_training
-from peft import LoraConfig, get_peft_model
+from peft import LoraConfig, get_peft_model, PeftModel
 import transformers
 from datetime import datetime
 from trl import SFTTrainer
