@@ -77,7 +77,7 @@ class AutoMistral:
         self.num_beams=num_beams
         self.max_new_tokens=max_new_tokens
         self.stream_output=stream_output
-    def train(self, base_model:str="", dataset_url:str=None, model_name:str="mistralfinetuned", batch_size:int=None, num_train_epochs:int=5, max_length:int=512, resume_checkpoint:str=None):
+    def train(self, base_model:str="", dataset_url:str=None, model_name:str="mistralfinetuned", batch_size:int=32, num_train_epochs:int=5, max_length:int=512, resume_checkpoint:str=None):
         from streamai.mistral import AutoTrainMistral
 
         #WIP

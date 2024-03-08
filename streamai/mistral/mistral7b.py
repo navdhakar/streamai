@@ -47,7 +47,7 @@ def train(
     num_train_epochs:int=5,
     max_length:int=512,
     resume_checkpoint:str=None,
-    batch_size:int=None
+    batch_size:int=32
 ):
 
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
@@ -66,7 +66,7 @@ def train(
         bnb_4bit_compute_dtype=torch.bfloat16
     )
     print(f"downloading base model {base_model}")
-    print("please be patient downloading models can take some time")
+    print("please be patient downloading models can take some time...")
     model = AutoModelForCausalLM.from_pretrained(base_model, quantization_config=bnb_config, device_map="auto")
     tokenizer = AutoTokenizer.from_pretrained(
     base_model,

@@ -17,10 +17,10 @@ def Trainmodel(
     base_model:str="mistralai/Mistral-7B-v0.1f",
     dataset_url:str=None,
     scrol_token:str=None,
-    num_train_epochs:int=None,
-    max_length:int=None,
+    num_train_epochs:int=5,
+    max_length:int=512,
     resume_checkpoint:str=None,
-    batch_size:int=None
+    batch_size:int=32
     ):
     output_dir_base = model_name if model_name else "./mistral7b-finetuned"
     output_dir = f"{output_dir_base}"
