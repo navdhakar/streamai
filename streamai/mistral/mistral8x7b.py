@@ -60,7 +60,8 @@ def train(
     num_train_epochs:int=5,
     max_length:int=512,
     resume_checkpoint:str=None,
-    batch_size:int=32
+    batch_size:int=32,
+    wb_token:str=None
 ):
     tokenizer = AutoTokenizer.from_pretrained(base_model)
     if tokenizer.pad_token is None:
@@ -146,6 +147,7 @@ def train(
         eval_steps=10, # comment out this line if you want to evaluate at the end of each epoch
         learning_rate=2.5e-5,
         bf16=True,
+        report_to="wandb" if wb_token else None,
         # lr_scheduler_type='constant',
     )
 

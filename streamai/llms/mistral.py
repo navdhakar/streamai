@@ -77,7 +77,7 @@ class AutoMistral:
         self.num_beams=num_beams
         self.max_new_tokens=max_new_tokens
         self.stream_output=stream_output
-    def train(self, base_model:str="", dataset_url:str=None, model_name:str="mistralfinetuned", batch_size:int=32, num_train_epochs:int=5, max_length:int=512, resume_checkpoint:str=None):
+    def train(self, base_model:str="", dataset_url:str=None, model_name:str="mistralfinetuned", batch_size:int=32, num_train_epochs:int=5, max_length:int=512, resume_checkpoint:str=None, wb_token:str=None):
         from streamai.mistral import AutoTrainMistral
 
         #WIP
@@ -87,7 +87,7 @@ class AutoMistral:
         #saving trained output weights correcly so autoloader can load finetuned model easily,
         #chek if required can gpu specs support training
         if dataset_url:
-            AutoTrainMistral(base_model=self.base_model, dataset_url=dataset_url, model_name=model_name, num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint, batch_size=batch_size)
+            AutoTrainMistral(base_model=self.base_model, dataset_url=dataset_url, model_name=model_name, num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint, batch_size=batch_size, wb_token=wb_token)
         else:
             return f"please provide url for your dataset."
     def inferenceIO(self, prompt, max_new_tokens:int=128):

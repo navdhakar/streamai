@@ -20,7 +20,8 @@ def Trainmodel(
     num_train_epochs:int=5,
     max_length:int=512,
     resume_checkpoint:str=None,
-    batch_size:int=32
+    batch_size:int=32,
+    wb_token:str=None
     ):
     output_dir_base = model_name if model_name else "./mistral7b-finetuned"
     output_dir = f"{output_dir_base}"
@@ -49,7 +50,7 @@ def Trainmodel(
                 # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
             if(base_model == 'mistralai/Mistral-7B-v0.1'):
                 print('training mistral 7b model')
-                TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1", dataset_path='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint, batch_size=batch_size)
+                TrainMistral7b(base_model="mistralai/Mistral-7B-v0.1", dataset_path='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint, batch_size=batch_size, wb_token=wb_token)
                 # print("uploading finetuned model to storage")
                 # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
             else:
@@ -72,14 +73,14 @@ def Trainmodel(
                         subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
 
                     print("training mistral moe")
-                    TrainMistral8x7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint, batch_size=batch_size)
+                    TrainMistral8x7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint, batch_size=batch_size, wb_token=wb_token)
                     # print("uploading finetuned model to storage")
                     # upload_folder("https://scrol-internal-testing.onrender.com/upload-model", output_dir, payload)
                     print("training completed.")
                     print(f"fine tuning weights are present in dir {output_dir}")
                 if(base_model == 'mistralai/Mistral-7B-v0.1' or base_model == 'mistralai/Mistral-7B-Instruct-v0.1'):
                     print('training mistral 7b model')
-                    TrainMistral7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint, batch_size=batch_size)
+                    TrainMistral7b(base_model=base_model, dataset_file='dataset.json', output_dir=f"{output_dir}", num_train_epochs=num_train_epochs, max_length=max_length, resume_checkpoint=resume_checkpoint, batch_size=batch_size, wb_token=wb_token)
                     print("training completed.")
                     print(f"fine tuning weights are present in dir {output_dir}")
                 else:

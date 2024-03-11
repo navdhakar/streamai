@@ -47,7 +47,8 @@ def train(
     num_train_epochs:int=5,
     max_length:int=512,
     resume_checkpoint:str=None,
-    batch_size:int=32
+    batch_size:int=32,
+    wb_token:str=None
 ):
 
     train_dataset = load_dataset('json', data_files=dataset_file, split='train[0:20%]')
@@ -144,6 +145,7 @@ def train(
             evaluation_strategy="steps", # Evaluate the model every logging step
             eval_steps=25,               # Evaluate and save checkpoints every 50 steps
             do_eval=True,                # Perform evaluation at the end of training
+            report_to="wandb" if wb_token else None,
         ),
         data_collator=transformers.DataCollatorForLanguageModeling(tokenizer, mlm=False),
         packing= True,
