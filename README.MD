@@ -76,6 +76,7 @@ todo:
 - [x] add input for num_train_epochs for finetuning.
 - [ ] add input for train test split.
 - [x] add input for max_seq_length.
+- [ ] need to install flash-attn during inference of mixtral8x7b
 - [ ] add both generation and training test cases for mistral.
 - [ ] add nginx reverse proxy.
 - [ ] add tests cases.

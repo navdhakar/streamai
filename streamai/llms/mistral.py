@@ -92,6 +92,10 @@ class AutoMistral:
             return f"please provide url for your dataset."
     def inferenceIO(self, prompt, max_new_tokens:int=128):
         from streamai.mistral import Evalmodel
+        if(self.base_model == 'mistralai/Mixtral-8x7B-v0.1' or self.base_model=="mistralai/Mixtral-8x7B-Instruct-v0.1"):
+            packages_to_install = ["flash-attn"]
+            if packages_to_install:
+                subprocess.run([sys.executable, "-m", "pip", "install"] + packages_to_install)
         if self.model:
             self.generation = ""
             for output in Evalmodel(
