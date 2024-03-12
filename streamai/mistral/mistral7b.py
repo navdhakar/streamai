@@ -9,7 +9,7 @@ import transformers
 from datetime import datetime
 from trl import SFTTrainer
 import fire
-
+from datetime import datetime
 
 def formatting_func(sample):
   bos_token = "<s>"
@@ -115,12 +115,15 @@ def train(
         model.is_parallelizable = True
         model.model_parallel = True
     model = accelerator.prepare_model(model)
-    project = "journal-finetune"
     base_model_name = "mistral"
 
+    run_name = base_model + output_dir
     print(f"Number of training epochs: {num_train_epochs}")
     print(f"context length: {max_length}")
     print(f"Batch size: {batch_size}")
+    if wb_token:
+        print(f"Weights and bias run: {run_name}")
+
     trainer = SFTTrainer(
         model=model,
         train_dataset=tokenized_train_dataset,
@@ -146,6 +149,7 @@ def train(
             eval_steps=25,               # Evaluate and save checkpoints every 50 steps
             do_eval=True,                # Perform evaluation at the end of training
             report_to="wandb" if wb_token else None,
+            run_name=f"{run_name}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}" if wb_token else None,
         ),
         data_collator=transformers.DataCollatorForLanguageModeling(tokenizer, mlm=False),
         packing= True,

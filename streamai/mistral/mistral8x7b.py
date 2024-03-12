@@ -6,6 +6,7 @@ from trl import SFTTrainer
 from datasets import load_dataset
 import torch
 import fire
+from datetime import datetime
 
 def formatting_func(sample):
   bos_token = "<s>"
@@ -130,10 +131,13 @@ def train(
         print(torch.cuda.device_count())
         model.is_parallelizable = True
         model.model_parallel = True
+    run_name = base_model + output_dir
 
     print(f"Number of training epochs: {num_train_epochs}")
     print(f"context length: {max_length}")
     print(f"Batch size: {batch_size}")
+    if wb_token:
+        print(f"Weights and bias run: {run_name}")
     args = TrainingArguments(
         output_dir = output_dir,
         num_train_epochs=num_train_epochs,
@@ -148,6 +152,7 @@ def train(
         learning_rate=2.5e-5,
         bf16=True,
         report_to="wandb" if wb_token else None,
+        run_name=f"{run_name}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}" if wb_token else None,
         # lr_scheduler_type='constant',
     )
 
