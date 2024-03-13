@@ -141,7 +141,7 @@ def train(
             learning_rate=2.5e-5, # Want a small lr for finetuning
             bf16=True,
             optim="paged_adamw_8bit",
-            logging_steps=25,              # When to start reporting loss
+            logging_steps=1,              # When to start reporting loss
             logging_dir="./logs",        # Directory for storing logs
             save_strategy="steps",       # Save the model checkpoint every logging step
             save_steps=25,                # Save checkpoints every 50 steps

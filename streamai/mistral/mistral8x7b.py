@@ -144,7 +144,7 @@ def train(
         # max_steps = 1000, # comment out this line if you want to train in epochs
         per_device_train_batch_size = batch_size,
         warmup_steps = 0.03,
-        logging_steps=10,
+        logging_steps=1,
         save_strategy="epoch",
         #evaluation_strategy="epoch",
         evaluation_strategy="steps",
