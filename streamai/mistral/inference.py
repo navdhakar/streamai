@@ -48,14 +48,13 @@ def main(
         if device == "cuda":
             print("loading cuda")
             base_model_reload = AutoModelForCausalLM.from_pretrained(
-                base_model,
-                device_map='auto',
-                quantization_config=nf4_config,
-                use_cache=False,
-                attn_implementation="flash_attention_2"
+                base_model,  # Mistral, same as before
+    quantization_config=nf4_config,  # Same quantization config as before
+    device_map="auto",
+    trust_remote_code=True,
                 )
             model = PeftModel.from_pretrained(base_model_reload, lora_weights)
-            model = model.merge_and_unload()
+
         elif device == "mps":
 
             base_model_reload = AutoModelForCausalLM.from_pretrained(
@@ -66,7 +65,6 @@ def main(
                 attn_implementation="flash_attention_2"
                 )
             model = PeftModel.from_pretrained(base_model_reload, lora_weights)
-            model = model.merge_and_unload()
         else:
 
             base_model_reload = AutoModelForCausalLM.from_pretrained(
@@ -77,7 +75,6 @@ def main(
                 attn_implementation="flash_attention_2"
                 )
             model = PeftModel.from_pretrained(base_model_reload, lora_weights)
-            model = model.merge_and_unload()
     else:
         if device == "cuda":
 
@@ -136,72 +133,22 @@ def evaluate(
     stream_output=False,
     **kwargs,
 ):
-    system_prompt = 'The conversation between Human and AI assisatance named Mistral\n'
+
+    system_prompt = 'Generate 5 question from this text in array format to get most info about the text.'
     B_INST, E_INST = "[INST]", "[/INST]"
-    prompt = f"{system_prompt}{B_INST}{instruction.strip()}\n{E_INST}"
-    print(base_model)
+    prompt = f"{B_INST}{system_prompt}\n{instruction.strip()}{E_INST}"
 
     tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
-    tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.padding_side = "right"
 
-    inputs = tokenizer([prompt], return_tensors="pt").to(device)
-    input_ids = inputs["input_ids"].to(device)
-    generation_config = GenerationConfig(
-        temperature=temperature,
-        top_p=top_p,
-        top_k=top_k,
-        num_beams=num_beams,
-        **kwargs,
-    )
-
-    generate_params = {
-        "input_ids": input_ids,
-        "generation_config": generation_config,
-        "return_dict_in_generate": True,
-        "output_scores": True,
-        "max_new_tokens": max_new_tokens,
-    }
-
-    if stream_output:
-        # Stream the reply 1 token at a time.
-        # This is based on the trick of using 'stopping_criteria' to create an iterator,
-        # from https://github.com/oobabooga/text-generation-webui/blob/ad37f396fc8bcbab90e11ecf17c56c97bfbd4a9c/modules/text_generation.py#L216-L243.
-
-        def generate_with_callback(callback=None, **kwargs):
-            kwargs.setdefault(
-                "stopping_criteria", transformers.StoppingCriteriaList()
-            )
-            kwargs["stopping_criteria"].append(
-                Stream(callback_func=callback)
-            )
-            with torch.no_grad():
-                model.generate(**kwargs)
-
-        def generate_with_streaming(**kwargs):
-            return Iteratorize(
-                generate_with_callback, kwargs, callback=None
-            )
-
-        with generate_with_streaming(**generate_params) as generator:
-            for output in generator:
-                # new_tokens = len(output) - len(input_ids[0])
-                decoded_output = tokenizer.decode(output)
-
-                if output[-1] in [tokenizer.eos_token_id]:
-                    break
-
-                yield decoded_output
-        return  # early return for stream_output
+    inputs = tokenizer(prompt, return_tensors="pt").to(device)
 
     # Without streaming
-    with torch.no_grad():
-        generation_output = model.generate(
+    model.eval()
+    generation_output = model.generate(
             **inputs,
             # generation_config=generation_config,
             max_new_tokens=max_new_tokens,
             repetition_penalty=1.15
         )
-    s = generation_output[0]
-    output = tokenizer.decode(s)
+    output = tokenizer.decode(generation_output[0])
     yield output
