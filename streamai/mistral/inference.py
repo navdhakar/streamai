@@ -88,7 +88,7 @@ def main(
                 use_cache=False,
                 attn_implementation="flash_attention_2"
                 )
-            
+
         elif device == "mps":
 
             model = AutoModelForCausalLM.from_pretrained(
@@ -139,12 +139,13 @@ def evaluate(
     system_prompt = 'The conversation between Human and AI assisatance named Mistral\n'
     B_INST, E_INST = "[INST]", "[/INST]"
     prompt = f"{system_prompt}{B_INST}{instruction.strip()}\n{E_INST}"
+    print(base_model)
 
     tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "right"
 
-    inputs = tokenizer([prompt], return_tensors="pt")
+    inputs = tokenizer([prompt], return_tensors="pt").to(device)
     input_ids = inputs["input_ids"].to(device)
     generation_config = GenerationConfig(
         temperature=temperature,
@@ -196,12 +197,11 @@ def evaluate(
     # Without streaming
     with torch.no_grad():
         generation_output = model.generate(
-            input_ids=input_ids,
+            **inputs,
             # generation_config=generation_config,
-            return_dict_in_generate=True,
-            output_scores=True,
             max_new_tokens=max_new_tokens,
+            repetition_penalty=1.15
         )
-    s = generation_output.sequences[0]
+    s = generation_output[0]
     output = tokenizer.decode(s)
     yield output
