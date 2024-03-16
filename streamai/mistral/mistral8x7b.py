@@ -7,6 +7,7 @@ from datasets import load_dataset
 import torch
 import fire
 from datetime import datetime
+import wandb
 
 def formatting_func(sample):
   bos_token = "<s>"
@@ -137,6 +138,7 @@ def train(
     print(f"context length: {max_length}")
     print(f"Batch size: {batch_size}")
     if wb_token:
+        wandb.login(key=wb_token)
         print(f"Weights and bias run: {run_name}")
     args = TrainingArguments(
         output_dir = output_dir,
